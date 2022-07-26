@@ -1,0 +1,7 @@
+{
+  "name": "schulden-frontend",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
