@@ -3,10 +3,26 @@ import ReactDOM from 'react-dom'
 import App from './App'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 import reportWebVitals from './reportWebVitals'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
+import AuthService from './services/AuthService'
+import { ServiceProvider, Services } from './providers/ServiceProvider'
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000',
+  cache: new InMemoryCache(),
+})
+
+const authService = new AuthService(client)
+
+const services: Services = {
+  auth: authService,
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ServiceProvider services={services}>
+      <App />
+    </ServiceProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 )
