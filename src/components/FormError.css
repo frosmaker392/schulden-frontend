@@ -1,0 +1,6 @@
+.form-error {
+  border: 2px solid var(--ion-color-danger);
+  border-radius: 0.4em;
+
+  color: var(--ion-color-danger);
+}

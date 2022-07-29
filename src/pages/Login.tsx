@@ -1,9 +1,6 @@
-import React, { FormEvent, useCallback, useContext, useState } from 'react'
+import React, { FormEvent, useCallback, useRef, useState } from 'react'
 import {
-  InputCustomEvent,
-  IonBackButton,
   IonButton,
-  IonButtons,
   IonContent,
   IonHeader,
   IonInput,
@@ -12,55 +9,52 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  useIonToast,
 } from '@ionic/react'
-import './Login.css'
-import { ServiceContext } from '../providers/ServiceProvider'
+import './LoginRegister.css'
+import useAuth from '../hooks/useAuth'
+import { Redirect } from 'react-router'
+
+import FormError from '../components/FormError'
 
 const Login: React.FC = () => {
-  const { auth } = useContext(ServiceContext)
-  const [present] = useIonToast()
+  const formRef = useRef<HTMLFormElement>(null)
+  const [redirect, setRedirect] = useState(false)
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const { login, error } = useAuth(() => setRedirect(true))
 
-  const handleEmailChange = (e: InputCustomEvent) => setEmail(e.detail.value ?? '')
-  const handlePasswordChange = (e: InputCustomEvent) => setPassword(e.detail.value ?? '')
+  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
 
-  const handleSubmit = useCallback(
-    async (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
+    const email = formRef.current?.email.value ?? ''
+    const password = formRef.current?.password.value ?? ''
 
-      const response = await auth.login({ email, password })
-      if ('errorMessage' in response) present(`An error occurred: ${response.errorMessage}`, 2000)
-      else present(`Token: ${response.token}`, 2000)
-    },
-    [email, password],
-  )
+    login({ email, password })
+  }, [])
 
   return (
     <IonPage>
+      {redirect && <Redirect exact to='/home' />}
+
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot='start'>
-            <IonBackButton />
-          </IonButtons>
           <IonTitle>Login</IonTitle>
         </IonToolbar>
       </IonHeader>
 
-      <IonContent class='ion-padding'>
-        <form className='login' onSubmit={handleSubmit}>
+      <IonContent>
+        <form className='login-register' onSubmit={handleSubmit} ref={formRef}>
           <IonItem lines='full'>
             <IonLabel position='floating'>Email</IonLabel>
-            <IonInput type='email' required onIonChange={handleEmailChange} />
+            <IonInput type='email' name='email' required />
           </IonItem>
           <IonItem lines='full'>
             <IonLabel position='floating'>Password</IonLabel>
-            <IonInput type='password' required onIonChange={handlePasswordChange} />
+            <IonInput type='password' name='password' required />
           </IonItem>
 
-          <IonButton type='submit' class='login-btn'>
+          <FormError error={error} />
+
+          <IonButton type='submit' class='submit-btn'>
             Login
           </IonButton>
           <IonButton fill='clear' routerLink='/register'>

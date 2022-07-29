@@ -1,8 +1,8 @@
 import React, { createContext } from 'react'
-import AuthService from '../services/AuthService'
+import { IAuthService } from '../services/AuthService'
 
 export interface Services {
-  auth: AuthService
+  auth: IAuthService
 }
 
 interface ServiceProviderProps {

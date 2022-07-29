@@ -12,7 +12,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
-const authService = new AuthService(client)
+const authService = new AuthService(client, localStorage)
 
 const services: Services = {
   auth: authService,

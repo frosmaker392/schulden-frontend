@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FormEvent, useCallback, useRef, useState } from 'react'
 import {
   IonBackButton,
   IonButton,
@@ -12,11 +12,32 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import './Register.css'
+import './LoginRegister.css'
+import useAuth from '../hooks/useAuth'
+import FormError from '../components/FormError'
+import { extractFromForm } from '../utils/FormUtils'
+import { Redirect } from 'react-router'
 
 const Register: React.FC = () => {
+  const formRef = useRef<HTMLFormElement>(null)
+  const [redirect, setRedirect] = useState(false)
+
+  const { register, error } = useAuth(() => setRedirect(true))
+
+  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const email = extractFromForm(formRef.current, 'email')
+    const username = extractFromForm(formRef.current, 'username')
+    const password = extractFromForm(formRef.current, 'password')
+
+    register({ email, username, password })
+  }, [])
+
   return (
     <IonPage>
+      {redirect && <Redirect exact to='/home' />}
+
       <IonHeader>
         <IonToolbar>
           <IonButtons slot='start'>
@@ -26,22 +47,24 @@ const Register: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent class='ion-padding'>
-        <form className='register'>
+      <IonContent>
+        <form className='login-register' ref={formRef} onSubmit={handleSubmit}>
           <IonItem lines='full'>
             <IonLabel position='floating'>Email</IonLabel>
-            <IonInput type='email' required />
+            <IonInput type='email' name='email' required />
           </IonItem>
           <IonItem lines='full'>
             <IonLabel position='floating'>Username</IonLabel>
-            <IonInput type='text' required />
+            <IonInput type='text' name='username' required />
           </IonItem>
           <IonItem lines='full'>
             <IonLabel position='floating'>Password</IonLabel>
-            <IonInput type='password' required />
+            <IonInput type='password' name='password' required />
           </IonItem>
 
-          <IonButton type='submit' class='register-btn'>
+          <FormError error={error} />
+
+          <IonButton type='submit' class='submit-btn'>
             Register
           </IonButton>
         </form>
