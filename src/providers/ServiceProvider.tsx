@@ -1,16 +1,22 @@
-import React, { createContext } from 'react'
+import React from 'react'
 import { IAuthService } from '../services/AuthService'
+import { ITokenService } from '../services/TokenService'
+import AuthServiceProvider from './AuthServiceProvider'
+import TokenServiceProvider from './TokenServiceProvider'
 
 export interface Services {
   auth: IAuthService
+  token: ITokenService
 }
 
 interface ServiceProviderProps {
   services: Services
 }
 
-export const ServiceContext = createContext<Services>({} as Services)
-
 export const ServiceProvider: React.FC<ServiceProviderProps> = ({ services, children }) => {
-  return <ServiceContext.Provider value={services}>{children}</ServiceContext.Provider>
+  return (
+    <AuthServiceProvider service={services.auth}>
+      <TokenServiceProvider service={services.token}>{children}</TokenServiceProvider>
+    </AuthServiceProvider>
+  )
 }

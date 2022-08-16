@@ -3,19 +3,38 @@ import ReactDOM from 'react-dom'
 import App from './App'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 import reportWebVitals from './reportWebVitals'
-import { ApolloClient, InMemoryCache } from '@apollo/client'
+import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client'
 import AuthService from './services/AuthService'
 import { ServiceProvider, Services } from './providers/ServiceProvider'
+import TokenService from './services/TokenService'
+
+const tokenService = new TokenService(localStorage)
+
+// https://medium.com/risan/set-authorization-header-with-apollo-client-e934e6517ccf
+const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
+
+const authLink = new ApolloLink((operation, forward) => {
+  const token = tokenService.getToken()
+
+  operation.setContext({
+    headers: {
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  })
+
+  return forward(operation)
+})
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000',
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 })
 
-const authService = new AuthService(client, localStorage)
+const authService = new AuthService(client)
 
 const services: Services = {
   auth: authService,
+  token: tokenService,
 }
 
 ReactDOM.render(

@@ -1,7 +1,6 @@
 import { createMockClient } from 'mock-apollo-client'
 
 import { AuthSuccess, Error } from '../typeDefs'
-import { MockStorage } from '../utils/TestUtils'
 import AuthService, { LOGIN, LoginForm, REGISTER, RegisterForm } from './AuthService'
 
 const loginForm: LoginForm = {
@@ -41,18 +40,16 @@ const registerHandler = jest.fn().mockImplementation(({ email, password }: Regis
   })
 })
 
-let storage: Storage
 let authService: AuthService
 describe('AuthService', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    storage = new MockStorage()
     const client = createMockClient()
     client.setRequestHandler(LOGIN, loginHandler)
     client.setRequestHandler(REGISTER, registerHandler)
 
-    authService = new AuthService(client, storage)
+    authService = new AuthService(client)
   })
 
   describe('login', () => {
@@ -85,25 +82,5 @@ describe('AuthService', () => {
 
       expect(response).toEqual(errorResponse)
     })
-  })
-
-  test('get- and storeToken', () => {
-    expect(authService.getToken()).toBeUndefined()
-
-    authService.storeToken('exampleToken')
-    expect(storage.getItem('schulden-jwt')).toBe('exampleToken')
-    expect(authService.getToken()).toBe('exampleToken')
-
-    // Overwrites previous token
-    authService.storeToken('anotherToken')
-    expect(authService.getToken()).toBe('anotherToken')
-  })
-
-  test('clearToken', () => {
-    authService.storeToken('exampleToken')
-    authService.clearToken()
-
-    expect(storage.getItem('schulden-jwt')).toBeNull()
-    expect(authService.getToken()).toBeUndefined()
   })
 })

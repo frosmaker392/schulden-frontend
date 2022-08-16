@@ -1,28 +1,34 @@
 import { useCallback, useContext, useState } from 'react'
-import { ServiceContext } from '../providers/ServiceProvider'
+import { AuthServiceContext } from '../providers/AuthServiceProvider'
+import { TokenServiceContext } from '../providers/TokenServiceProvider'
 import { LoginForm, RegisterForm } from '../services/AuthService'
 
-const useAuth = (onSuccess: () => void) => {
-  const { auth } = useContext(ServiceContext)
+const useAuth = () => {
+  const authService = useContext(AuthServiceContext)
+  const tokenService = useContext(TokenServiceContext)
+
+  const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
 
   const login = useCallback(async (form: LoginForm) => {
-    const result = await auth.login(form)
+    const result = await authService.login(form)
+
     if ('token' in result) {
-      auth.storeToken(result.token)
-      onSuccess()
+      tokenService.storeToken(result.token)
+      setSuccess(true)
     } else setError(result.errorMessage)
   }, [])
 
   const register = useCallback(async (form: RegisterForm) => {
-    const result = await auth.register(form)
+    const result = await authService.register(form)
+
     if ('token' in result) {
-      auth.storeToken(result.token)
-      onSuccess()
+      tokenService.storeToken(result.token)
+      setSuccess(true)
     } else setError(result.errorMessage)
   }, [])
 
-  return { login, register, error }
+  return { login, register, success, error }
 }
 
 export default useAuth

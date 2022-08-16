@@ -1,4 +1,4 @@
-import React, { FormEvent, useCallback, useRef, useState } from 'react'
+import React, { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import {
   IonButton,
   IonContent,
@@ -20,7 +20,11 @@ const Login: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null)
   const [redirect, setRedirect] = useState(false)
 
-  const { login, error } = useAuth(() => setRedirect(true))
+  const { login, success, error } = useAuth()
+
+  useEffect(() => {
+    if (success) setRedirect(true)
+  }, [success])
 
   const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
