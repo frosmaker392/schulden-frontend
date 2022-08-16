@@ -1,0 +1,10 @@
+.expense-list > ion-item {
+  --background: var(--ion-color-light-shade);
+  --border-radius: 0.5em;
+
+  margin-bottom: 0.5em;
+}
+
+.expense-list > ion-item:last-child {
+  margin-bottom: 0;
+}

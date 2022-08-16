@@ -19,6 +19,8 @@ const successAuthService: IAuthService = {
       token: 'token-from-register',
     }
   },
+
+  getCurrentUser: () => Promise.resolve({ errorMessage: '' }),
 }
 
 const failingAuthService: IAuthService = {
@@ -33,6 +35,8 @@ const failingAuthService: IAuthService = {
       errorMessage: 'register-error-message',
     }
   },
+
+  getCurrentUser: () => Promise.resolve({ errorMessage: '' }),
 }
 
 const tokenSetter = jest.fn()

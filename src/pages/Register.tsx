@@ -40,7 +40,7 @@ const Register: React.FC = () => {
 
   return (
     <IonPage>
-      {redirect && <Redirect exact to='/home' />}
+      {redirect && <Redirect exact to='/main' />}
 
       <IonHeader>
         <IonToolbar>

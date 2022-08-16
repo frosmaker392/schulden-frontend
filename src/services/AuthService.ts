@@ -1,6 +1,6 @@
 import { ApolloClient, gql, NormalizedCacheObject } from '@apollo/client'
 
-import { AuthResult } from '../typeDefs'
+import { AuthResult, UserResult } from '../typeDefs'
 
 export interface LoginForm {
   email: string
@@ -16,6 +16,7 @@ export interface RegisterForm {
 export interface IAuthService {
   login(form: LoginForm): Promise<AuthResult>
   register(form: RegisterForm): Promise<AuthResult>
+  getCurrentUser(): Promise<UserResult>
 }
 
 export const LOGIN = gql`
@@ -44,6 +45,21 @@ export const REGISTER = gql`
   }
 `
 
+export const CURRENT_USER = gql`
+  query CurrentUser {
+    currentUser {
+      ... on User {
+        id
+        email
+        username
+      }
+      ... on Error {
+        errorMessage
+      }
+    }
+  }
+`
+
 export default class AuthService implements IAuthService {
   constructor(private apolloClient: ApolloClient<NormalizedCacheObject>) {}
 
@@ -61,5 +77,13 @@ export default class AuthService implements IAuthService {
       variables: { ...form },
     })
     return result.data.register
+  }
+
+  async getCurrentUser(): Promise<UserResult> {
+    const result = await this.apolloClient.query({
+      query: CURRENT_USER,
+    })
+
+    return result.data.currentUser
   }
 }

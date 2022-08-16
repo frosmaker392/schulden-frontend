@@ -9,6 +9,7 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonToast,
 } from '@ionic/react'
 import './LoginRegister.css'
 import useAuth from '../hooks/useAuth'
@@ -17,13 +18,18 @@ import { Redirect } from 'react-router'
 import FormError from '../components/FormError'
 
 const Login: React.FC = () => {
+  const [present] = useIonToast()
+
   const formRef = useRef<HTMLFormElement>(null)
   const [redirect, setRedirect] = useState(false)
 
   const { login, success, error } = useAuth()
 
   useEffect(() => {
-    if (success) setRedirect(true)
+    if (success) {
+      present('Login successful!', 2000)
+      setRedirect(true)
+    }
   }, [success])
 
   const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
@@ -37,7 +43,7 @@ const Login: React.FC = () => {
 
   return (
     <IonPage>
-      {redirect && <Redirect exact to='/home' />}
+      {redirect && <Redirect exact to='/main' />}
 
       <IonHeader>
         <IonToolbar>
