@@ -1,10 +1,22 @@
 .expense-list > ion-item {
   --background: var(--ion-color-light-shade);
-  --border-radius: 0.5em;
-
-  margin-bottom: 0.5em;
+  --min-height: 3.5em;
 }
 
-.expense-list > ion-item:last-child {
-  margin-bottom: 0;
+.expense-list .outstanding-label {
+  text-align: right;
+  font-size: medium;
+}
+
+.expense-list .outstanding-label > p {
+  margin: 0;
+  line-height: 20px;
+}
+
+.expense-list .outstanding-label > p.positive {
+  color: var(--ion-color-success);
+}
+
+.expense-list .outstanding-label > p.negative {
+  color: var(--ion-color-danger);
 }

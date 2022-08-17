@@ -8,6 +8,11 @@ import AuthService from './services/AuthService'
 import { ServiceProvider, Services } from './providers/ServiceProvider'
 import TokenService from './services/TokenService'
 
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
+
 const tokenService = new TokenService(localStorage)
 
 // https://medium.com/risan/set-authorization-header-with-apollo-client-e934e6517ccf

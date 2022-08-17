@@ -8,7 +8,7 @@ interface FormErrorProps {
 const FormError: React.FC<FormErrorProps> = ({ error }) => {
   if (!error) return null
 
-  return <p className='ion-padding form-error'>{error}</p>
+  return <p className='form-error'>{error}</p>
 }
 
 export default FormError

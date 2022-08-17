@@ -15,7 +15,8 @@ import './LoginRegister.css'
 import useAuth from '../hooks/useAuth'
 import { Redirect } from 'react-router'
 
-import FormError from '../components/FormError'
+import FormError from '../components/form/FormError'
+import PasswordInput from '../components/form/PasswordInput'
 
 const Login: React.FC = () => {
   const [present] = useIonToast()
@@ -57,10 +58,7 @@ const Login: React.FC = () => {
             <IonLabel position='floating'>Email</IonLabel>
             <IonInput type='email' name='email' required />
           </IonItem>
-          <IonItem lines='full'>
-            <IonLabel position='floating'>Password</IonLabel>
-            <IonInput type='password' name='password' required />
-          </IonItem>
+          <PasswordInput />
 
           <FormError error={error} />
 

@@ -1,7 +1,9 @@
 .login-register > ion-button {
   width: 100%;
+  padding: 0 16px;
+  margin-top: 16px;
 }
 
-.login-register > .submit-btn {
-  margin-top: 1em;
+.login-register > .form-error {
+  margin-top: 16px;
 }

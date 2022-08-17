@@ -1,6 +1,9 @@
 .form-error {
   border: 2px solid var(--ion-color-danger);
-  border-radius: 0.4em;
+  border-radius: 10px;
+
+  margin: 0 16px;
+  padding: 10px;
 
   color: var(--ion-color-danger);
 }

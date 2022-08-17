@@ -6,16 +6,19 @@ const mockExpenses: ExpenseListElement[] = [
   {
     id: 'expense-1',
     name: 'Expense 1',
+    timestamp: new Date(2022, 7, 10, 19, 34).toISOString(),
     outstandingAmount: -50,
   },
   {
     id: 'expense-2',
     name: 'Expense 2',
+    timestamp: new Date(2022, 6, 29, 10, 6).toISOString(),
     outstandingAmount: 62,
   },
   {
     id: 'expense-3',
     name: 'Expense 3',
+    timestamp: new Date(2022, 0, 4, 0, 34).toISOString(),
     outstandingAmount: 0,
   },
 ]

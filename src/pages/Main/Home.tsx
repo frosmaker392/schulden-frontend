@@ -1,15 +1,19 @@
 import {
   IonCard,
-  IonCardContent,
   IonCardHeader,
+  IonCardSubtitle,
   IonCardTitle,
   IonContent,
+  IonFab,
+  IonFabButton,
   IonHeader,
-  IonLabel,
+  IonIcon,
   IonPage,
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
+import { add } from 'ionicons/icons'
+
 import React from 'react'
 
 const Home: React.FC = () => {
@@ -30,13 +34,16 @@ const Home: React.FC = () => {
 
         <IonCard>
           <IonCardHeader>
-            <IonCardTitle>You owe people</IonCardTitle>
+            <IonCardSubtitle>You owe people</IonCardSubtitle>
+            <IonCardTitle>54,53 €</IonCardTitle>
           </IonCardHeader>
-
-          <IonCardContent>
-            <IonLabel>54,53 €</IonLabel>
-          </IonCardContent>
         </IonCard>
+
+        <IonFab vertical='bottom' horizontal='end' slot='fixed'>
+          <IonFabButton>
+            <IonIcon icon={add} />
+          </IonFabButton>
+        </IonFab>
       </IonContent>
     </IonPage>
   )

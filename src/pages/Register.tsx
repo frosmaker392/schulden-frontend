@@ -14,9 +14,10 @@ import {
 } from '@ionic/react'
 import './LoginRegister.css'
 import useAuth from '../hooks/useAuth'
-import FormError from '../components/FormError'
+import FormError from '../components/form/FormError'
 import { extractFromForm } from '../utils/FormUtils'
 import { Redirect } from 'react-router'
+import PasswordInput from '../components/form/PasswordInput'
 
 const Register: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null)
@@ -61,10 +62,7 @@ const Register: React.FC = () => {
             <IonLabel position='floating'>Username</IonLabel>
             <IonInput type='text' name='username' required />
           </IonItem>
-          <IonItem lines='full'>
-            <IonLabel position='floating'>Password</IonLabel>
-            <IonInput type='password' name='password' required />
-          </IonItem>
+          <PasswordInput />
 
           <FormError error={error} />
 
