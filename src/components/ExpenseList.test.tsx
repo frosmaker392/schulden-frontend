@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react'
-import ExpenseList, { ExpenseListElement, OutstandingLabel } from './ExpenseList'
+import { ExpenseListElement } from '../typeDefs'
+import ExpenseList, { OutstandingLabel } from './ExpenseList'
 
 const expenses: ExpenseListElement[] = [
   {

@@ -10,6 +10,7 @@ import TokenService from './services/TokenService'
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import ExpenseService from './services/ExpenseService'
 
 dayjs.extend(relativeTime)
 
@@ -36,10 +37,12 @@ const client = new ApolloClient({
 })
 
 const authService = new AuthService(client)
+const expenseService = new ExpenseService(client)
 
 const services: Services = {
   auth: authService,
   token: tokenService,
+  expense: expenseService,
 }
 
 ReactDOM.render(

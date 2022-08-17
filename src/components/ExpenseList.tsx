@@ -3,13 +3,7 @@ import React from 'react'
 import dayjs from 'dayjs'
 
 import './ExpenseList.css'
-
-export interface ExpenseListElement {
-  id: string
-  name: string
-  timestamp: string
-  outstandingAmount: number
-}
+import { ExpenseListElement } from '../typeDefs'
 
 interface OutstandingLabelProps {
   amount: number

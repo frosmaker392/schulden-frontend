@@ -1,29 +1,11 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react'
+import { IonContent, IonHeader, IonLoading, IonPage, IonTitle, IonToolbar } from '@ionic/react'
 import React from 'react'
-import ExpenseList, { ExpenseListElement } from '../../components/ExpenseList'
-
-const mockExpenses: ExpenseListElement[] = [
-  {
-    id: 'expense-1',
-    name: 'Expense 1',
-    timestamp: new Date(2022, 7, 10, 19, 34).toISOString(),
-    outstandingAmount: -50,
-  },
-  {
-    id: 'expense-2',
-    name: 'Expense 2',
-    timestamp: new Date(2022, 6, 29, 10, 6).toISOString(),
-    outstandingAmount: 62,
-  },
-  {
-    id: 'expense-3',
-    name: 'Expense 3',
-    timestamp: new Date(2022, 0, 4, 0, 34).toISOString(),
-    outstandingAmount: 0,
-  },
-]
+import ExpenseList from '../../components/ExpenseList'
+import useExpenseList from '../../hooks/useExpenseList'
 
 const Expenses: React.FC = () => {
+  const { expenses, loading } = useExpenseList()
+
   return (
     <IonPage>
       <IonHeader>
@@ -38,7 +20,9 @@ const Expenses: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <ExpenseList expenses={mockExpenses} />
+        <IonLoading isOpen={loading} />
+
+        <ExpenseList expenses={expenses ?? []} />
       </IonContent>
     </IonPage>
   )
