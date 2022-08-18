@@ -1,0 +1,12 @@
+query CurrentUser {
+  currentUser {
+    ... on User {
+      id
+      email
+      name
+    }
+    ... on Error {
+      errorMessage
+    }
+  }
+}

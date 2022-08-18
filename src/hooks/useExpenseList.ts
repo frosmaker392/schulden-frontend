@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
 import { AuthServiceContext } from '../providers/AuthServiceProvider'
 import { ExpenseServiceContext } from '../providers/ExpenseServiceProvider'
-import { ExpenseListElement, Optional } from '../typeDefs'
+import { ExpenseListElement } from '../services/ExpenseService'
+import { Optional } from '../typeDefs'
 
 const useExpenseList = () => {
   const authService = useContext(AuthServiceContext)

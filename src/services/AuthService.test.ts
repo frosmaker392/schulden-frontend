@@ -1,7 +1,6 @@
 import { createMockClient } from 'mock-apollo-client'
-
-import { AuthSuccess, Error } from '../typeDefs'
-import AuthService, { LOGIN, LoginForm, REGISTER, RegisterForm } from './AuthService'
+import { LoginDocument, RegisterDocument } from '../graphql/generated'
+import AuthService, { AuthResult, LoginForm, RegisterForm } from './AuthService'
 
 const loginForm: LoginForm = {
   email: 'test@test.com',
@@ -14,11 +13,11 @@ const registerForm: RegisterForm = {
   password: 'password',
 }
 
-const successResponse: AuthSuccess = {
+const successResponse: AuthResult = {
   token: 'mock-token',
 }
 
-const errorResponse: Error = {
+const errorResponse: AuthResult = {
   errorMessage: 'mock-error-message',
 }
 
@@ -46,8 +45,8 @@ describe('AuthService', () => {
     jest.clearAllMocks()
 
     const client = createMockClient()
-    client.setRequestHandler(LOGIN, loginHandler)
-    client.setRequestHandler(REGISTER, registerHandler)
+    client.setRequestHandler(LoginDocument, loginHandler)
+    client.setRequestHandler(RegisterDocument, registerHandler)
 
     authService = new AuthService(client)
   })

@@ -1,6 +1,13 @@
-import { ApolloClient, gql, NormalizedCacheObject } from '@apollo/client'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
-import { AuthResult, UserResult } from '../typeDefs'
+import {
+  LoginDocument,
+  RegisterDocument,
+  CurrentUserDocument,
+  LoginMutation,
+  User,
+} from '../graphql/generated'
+import { Error } from '../typeDefs'
 
 export interface LoginForm {
   email: string
@@ -13,77 +20,40 @@ export interface RegisterForm {
   password: string
 }
 
+export type AuthResult = LoginMutation['login']
+
+export type UserResult = User | Error
+
 export interface IAuthService {
   login(form: LoginForm): Promise<AuthResult>
   register(form: RegisterForm): Promise<AuthResult>
   getCurrentUser(): Promise<UserResult>
 }
 
-export const LOGIN = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      ... on AuthPayload {
-        token
-      }
-      ... on Error {
-        errorMessage
-      }
-    }
-  }
-`
-
-export const REGISTER = gql`
-  mutation Register($username: String!, $email: String!, $password: String!) {
-    register(username: $username, email: $email, password: $password) {
-      ... on AuthPayload {
-        token
-      }
-      ... on Error {
-        errorMessage
-      }
-    }
-  }
-`
-
-export const CURRENT_USER = gql`
-  query CurrentUser {
-    currentUser {
-      ... on User {
-        id
-        email
-        username
-      }
-      ... on Error {
-        errorMessage
-      }
-    }
-  }
-`
-
 export default class AuthService implements IAuthService {
   constructor(private apolloClient: ApolloClient<NormalizedCacheObject>) {}
 
   async login(form: LoginForm): Promise<AuthResult> {
-    const result = await this.apolloClient.mutate({
-      mutation: LOGIN,
+    const res = await this.apolloClient.mutate({
+      mutation: LoginDocument,
       variables: { ...form },
     })
-    return result.data.login
+    return res.data?.login ?? { errorMessage: 'No server response!' }
   }
 
   async register(form: RegisterForm): Promise<AuthResult> {
     const result = await this.apolloClient.mutate({
-      mutation: REGISTER,
+      mutation: RegisterDocument,
       variables: { ...form },
     })
-    return result.data.register
+    return result.data?.register ?? { errorMessage: 'No server response!' }
   }
 
   async getCurrentUser(): Promise<UserResult> {
     const result = await this.apolloClient.query({
-      query: CURRENT_USER,
+      query: CurrentUserDocument,
     })
 
-    return result.data.currentUser
+    return result.data?.currentUser ?? { errorMessage: 'Invalid token!' }
   }
 }

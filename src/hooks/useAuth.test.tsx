@@ -2,9 +2,8 @@ import { fireEvent, render, waitFor } from '@testing-library/react'
 import React from 'react'
 import AuthServiceProvider from '../providers/AuthServiceProvider'
 import TokenServiceProvider from '../providers/TokenServiceProvider'
-import { IAuthService } from '../services/AuthService'
+import { AuthResult, IAuthService } from '../services/AuthService'
 import { ITokenService } from '../services/TokenService'
-import { AuthResult } from '../typeDefs'
 import useAuth from './useAuth'
 
 const successAuthService: IAuthService = {

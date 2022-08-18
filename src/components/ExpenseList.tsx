@@ -3,7 +3,7 @@ import React from 'react'
 import dayjs from 'dayjs'
 
 import './ExpenseList.css'
-import { ExpenseListElement } from '../typeDefs'
+import { ExpenseListElement } from '../services/ExpenseService'
 
 interface OutstandingLabelProps {
   amount: number

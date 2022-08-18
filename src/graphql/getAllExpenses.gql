@@ -1,0 +1,23 @@
+query GetAllExpenses {
+  getAllExpenses {
+    ... on Expenses {
+      expenses {
+        id
+        name
+        timestamp
+        payer {
+          id
+        }
+        debtors {
+          person {
+            id
+          }
+          amount
+        }
+      }
+    }
+    ... on Error {
+      errorMessage
+    }
+  }
+}

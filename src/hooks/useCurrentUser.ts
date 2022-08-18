@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
+import { User } from '../graphql/generated'
 import { AuthServiceContext } from '../providers/AuthServiceProvider'
-import { Optional, User } from '../typeDefs'
+import { Optional } from '../typeDefs'
 
 const useCurrentUser = () => {
   const authService = useContext(AuthServiceContext)
