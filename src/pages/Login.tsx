@@ -3,9 +3,6 @@ import {
   IonButton,
   IonContent,
   IonHeader,
-  IonInput,
-  IonItem,
-  IonLabel,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -17,6 +14,7 @@ import { Redirect } from 'react-router'
 
 import FormError from '../components/form/FormError'
 import PasswordInput from '../components/form/PasswordInput'
+import TextInput from '../components/form/TextInput'
 
 const Login: React.FC = () => {
   const [present] = useIonToast()
@@ -54,11 +52,8 @@ const Login: React.FC = () => {
 
       <IonContent>
         <form className='login-register' onSubmit={handleSubmit} ref={formRef}>
-          <IonItem lines='full'>
-            <IonLabel position='floating'>Email</IonLabel>
-            <IonInput type='email' name='email' required />
-          </IonItem>
-          <PasswordInput />
+          <TextInput label='Email' type='email' />
+          <PasswordInput label='Password' />
 
           <FormError error={error} />
 

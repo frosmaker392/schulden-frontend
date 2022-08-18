@@ -4,13 +4,23 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 
 import './PasswordInput.css'
 
-const PasswordInput: React.FC = () => {
+interface PasswordInputProps {
+  label: string
+  name?: string
+}
+
+const PasswordInput: React.FC<PasswordInputProps> = ({ label, name }) => {
   const [show, setShow] = useState(false)
 
   return (
     <IonItem lines='full'>
-      <IonLabel position='floating'>Password</IonLabel>
-      <IonInput type={show ? 'text' : 'password'} name='password' required data-testid='input' />
+      <IonLabel position='floating'>{label}</IonLabel>
+      <IonInput
+        type={show ? 'text' : 'password'}
+        name={name ?? 'password'}
+        required
+        data-testid='input'
+      />
       <IonIcon
         slot='end'
         icon={show ? eyeOffOutline : eyeOutline}

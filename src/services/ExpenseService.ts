@@ -1,10 +1,23 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { Error } from '../typeDefs'
 
-import { GetAllExpensesDocument } from '../graphql/generated'
+import {
+  CreateExpenseDocument,
+  ExpenseResult,
+  GetAllExpensesDocument,
+  Person,
+} from '../graphql/generated'
 
-export interface IExpenseService {
-  getAll(userId: string): Promise<ExpensesListResult>
+interface Debtor {
+  person: Person
+  amount: number
+}
+
+export interface ExpenseForm {
+  name: string
+  totalAmount: number
+  payer: Person
+  debtors: Debtor[]
 }
 
 export interface ExpenseListElement {
@@ -16,8 +29,73 @@ export interface ExpenseListElement {
 
 export type ExpensesListResult = ExpenseListElement[] | Error
 
+export type SplitMethod = 'equal' | 'unequal'
+
+export interface SplitResult {
+  debtors: Debtor[]
+  rest: number
+}
+
+export const calculateSplit: IExpenseService['calculateSplit'] = (
+  totalAmount: number,
+  splitMethod: SplitMethod,
+  persons: Person[],
+  amounts: number[],
+) => {
+  if (splitMethod === 'equal') {
+    const amountPerPerson = Math.floor((totalAmount * 100) / persons.length) / 100
+    const floatingCents = Math.round((totalAmount - amountPerPerson * persons.length) * 100)
+
+    return {
+      debtors: persons.map((p, i) => {
+        const cent = i < floatingCents ? 0.01 : 0
+
+        return {
+          person: p,
+          amount: amountPerPerson + cent,
+        }
+      }),
+      rest: 0,
+    }
+  }
+
+  const rest = amounts.reduce((acc, amount) => acc - amount, totalAmount)
+  return {
+    debtors: persons.map((p, i) => ({
+      person: p,
+      amount: amounts.at(i) ?? 0,
+    })),
+    rest,
+  }
+}
+
+export interface IExpenseService {
+  create(form: ExpenseForm): Promise<ExpenseResult>
+  getAll(userId: string): Promise<ExpensesListResult>
+  calculateSplit(
+    totalAmount: number,
+    splitMethod: SplitMethod,
+    persons: Person[],
+    amounts: number[],
+  ): SplitResult
+}
+
 export default class ExpenseService implements IExpenseService {
   constructor(private apolloClient: ApolloClient<NormalizedCacheObject>) {}
+
+  async create(form: ExpenseForm): Promise<ExpenseResult> {
+    const res = await this.apolloClient.query({
+      query: CreateExpenseDocument,
+      variables: {
+        name: form.name,
+        totalAmount: form.totalAmount,
+        payerId: form.payer.id,
+        debtors: form.debtors.map((d) => ({ personId: d.person.id, amount: d.amount })),
+      },
+    })
+
+    return res.data.createExpense
+  }
 
   async getAll(userId: string): Promise<ExpensesListResult> {
     const res = await this.apolloClient.query({
@@ -50,5 +128,9 @@ export default class ExpenseService implements IExpenseService {
         outstandingAmount,
       }
     })
+  }
+
+  calculateSplit(...args: Parameters<IExpenseService['calculateSplit']>) {
+    return calculateSplit(...args)
   }
 }

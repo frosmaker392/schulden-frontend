@@ -124,6 +124,36 @@ export type User = Person & {
 
 export type UserResult = Error | User
 
+export type CreateExpenseMutationVariables = Exact<{
+  name: Scalars['String']
+  totalAmount: Scalars['Float']
+  payerId: Scalars['String']
+  debtors: Array<DebtorInputType> | DebtorInputType
+}>
+
+export type CreateExpenseMutation = {
+  __typename?: 'Mutation'
+  createExpense:
+    | { __typename?: 'Error'; errorMessage: string }
+    | {
+        __typename?: 'Expense'
+        id: string
+        name: string
+        timestamp: string
+        totalAmount: number
+        payer:
+          | { __typename?: 'OfflinePerson'; id: string; name: string }
+          | { __typename?: 'User'; id: string; name: string }
+        debtors: Array<{
+          __typename?: 'Debtor'
+          amount: number
+          person:
+            | { __typename?: 'OfflinePerson'; id: string; name: string }
+            | { __typename?: 'User'; id: string; name: string }
+        }>
+      }
+}
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>
 
 export type CurrentUserQuery = {
@@ -184,6 +214,145 @@ export type RegisterMutation = {
     | { __typename?: 'Error'; errorMessage: string }
 }
 
+export const CreateExpenseDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'CreateExpense' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'name' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'totalAmount' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Float' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'payerId' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'debtors' } },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: { kind: 'NamedType', name: { kind: 'Name', value: 'DebtorInputType' } },
+              },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'createExpense' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'name' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'name' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'totalAmount' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'totalAmount' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'payerId' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'payerId' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'debtors' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'debtors' } },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'InlineFragment',
+                  typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Expense' } },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'timestamp' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'totalAmount' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'payer' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                            { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                          ],
+                        },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'debtors' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'person' },
+                              selectionSet: {
+                                kind: 'SelectionSet',
+                                selections: [
+                                  { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                                  { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                                ],
+                              },
+                            },
+                            { kind: 'Field', name: { kind: 'Name', value: 'amount' } },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: 'InlineFragment',
+                  typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Error' } },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [{ kind: 'Field', name: { kind: 'Name', value: 'errorMessage' } }],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<CreateExpenseMutation, CreateExpenseMutationVariables>
 export const CurrentUserDocument = {
   kind: 'Document',
   definitions: [

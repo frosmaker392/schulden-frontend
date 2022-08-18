@@ -5,9 +5,6 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonInput,
-  IonItem,
-  IonLabel,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -18,6 +15,7 @@ import FormError from '../components/form/FormError'
 import { extractFromForm } from '../utils/FormUtils'
 import { Redirect } from 'react-router'
 import PasswordInput from '../components/form/PasswordInput'
+import TextInput from '../components/form/TextInput'
 
 const Register: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null)
@@ -54,15 +52,9 @@ const Register: React.FC = () => {
 
       <IonContent>
         <form className='login-register' ref={formRef} onSubmit={handleSubmit}>
-          <IonItem lines='full'>
-            <IonLabel position='floating'>Email</IonLabel>
-            <IonInput type='email' name='email' required />
-          </IonItem>
-          <IonItem lines='full'>
-            <IonLabel position='floating'>Username</IonLabel>
-            <IonInput type='text' name='username' required />
-          </IonItem>
-          <PasswordInput />
+          <TextInput label='Email' type='email' />
+          <TextInput label='Username' type='text' name='username' />
+          <PasswordInput label='Password' />
 
           <FormError error={error} />
 
