@@ -4,13 +4,13 @@ import { Redirect } from 'react-router'
 import useCurrentUser from '../hooks/useCurrentUser'
 
 const AuthGate: React.FC = () => {
-  const { user, pending, error } = useCurrentUser()
+  const { user, loading, error } = useCurrentUser()
 
   return (
     <>
-      <IonLoading isOpen={pending} />
+      <IonLoading isOpen={loading} />
       {user && <Redirect exact to='/main' />}
-      {error !== '' && <Redirect exact to='/login' />}
+      {error && <Redirect exact to='/login' />}
     </>
   )
 }

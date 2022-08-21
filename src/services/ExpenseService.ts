@@ -1,9 +1,10 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { Error } from '../typeDefs'
+import { Error, Optional } from '../typeDefs'
 
 import {
   CreateExpenseDocument,
   ExpenseResult,
+  FindPersonsDocument,
   GetAllExpensesDocument,
   Person,
 } from '../graphql/generated'
@@ -29,6 +30,8 @@ export interface ExpenseListElement {
 
 export type ExpensesListResult = ExpenseListElement[] | Error
 
+export type PersonsResult = Person[] | Error
+
 export type SplitMethod = 'equal' | 'unequal'
 
 export interface SplitResult {
@@ -40,7 +43,7 @@ export const calculateSplit: IExpenseService['calculateSplit'] = (
   totalAmount: number,
   splitMethod: SplitMethod,
   persons: Person[],
-  amounts: number[],
+  amounts: Optional<number>[],
 ) => {
   if (splitMethod === 'equal') {
     const amountPerPerson = Math.floor((totalAmount * 100) / persons.length) / 100
@@ -59,7 +62,7 @@ export const calculateSplit: IExpenseService['calculateSplit'] = (
     }
   }
 
-  const rest = amounts.reduce((acc, amount) => acc - amount, totalAmount)
+  const rest = amounts.reduce((acc: number, amount) => acc - (amount ?? 0), totalAmount)
   return {
     debtors: persons.map((p, i) => ({
       person: p,
@@ -72,11 +75,12 @@ export const calculateSplit: IExpenseService['calculateSplit'] = (
 export interface IExpenseService {
   create(form: ExpenseForm): Promise<ExpenseResult>
   getAll(userId: string): Promise<ExpensesListResult>
+  findPersons(name: string): Promise<PersonsResult>
   calculateSplit(
     totalAmount: number,
     splitMethod: SplitMethod,
     persons: Person[],
-    amounts: number[],
+    amounts: Optional<number>[],
   ): SplitResult
 }
 
@@ -128,6 +132,16 @@ export default class ExpenseService implements IExpenseService {
         outstandingAmount,
       }
     })
+  }
+
+  async findPersons(name: string): Promise<PersonsResult> {
+    const res = await this.apolloClient.query({
+      query: FindPersonsDocument,
+      variables: { name },
+    })
+
+    const data = res.data.findPersons
+    return 'errorMessage' in data ? data : data.persons
   }
 
   calculateSplit(...args: Parameters<IExpenseService['calculateSplit']>) {

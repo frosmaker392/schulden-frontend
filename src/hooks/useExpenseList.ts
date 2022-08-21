@@ -1,42 +1,24 @@
-import { useContext, useEffect, useState } from 'react'
-import { AuthServiceContext } from '../providers/AuthServiceProvider'
+import { useContext } from 'react'
 import { ExpenseServiceContext } from '../providers/ExpenseServiceProvider'
-import { ExpenseListElement } from '../services/ExpenseService'
-import { Optional } from '../typeDefs'
+import useCurrentUser from './useCurrentUser'
+
+import { useAsync } from 'react-async-hook'
 
 const useExpenseList = () => {
-  const authService = useContext(AuthServiceContext)
+  const { user, error: userError } = useCurrentUser()
   const expenseService = useContext(ExpenseServiceContext)
 
-  const [expenses, setExpenses] = useState<Optional<ExpenseListElement[]>>()
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const { result, loading, error } = useAsync(async () => {
+    if (!user) throw new Error('Cannot show expenses, please log in first!')
+    if (userError) throw userError
 
-  useEffect(() => {
-    if (expenses || error.length > 0) return
+    const expensesResult = await expenseService.getAll(user?.id)
 
-    const exec = async () => {
-      const userResult = await authService.getCurrentUser()
+    if ('errorMessage' in expensesResult) throw new Error(expensesResult.errorMessage)
+    return expensesResult
+  }, [user, userError])
 
-      if ('errorMessage' in userResult) {
-        setError(userResult.errorMessage)
-        return
-      }
-
-      const expensesResult = await expenseService.getAll(userResult.id)
-      if ('errorMessage' in expensesResult) {
-        setError(expensesResult.errorMessage)
-        return
-      }
-
-      setExpenses(expensesResult)
-    }
-
-    setLoading(true)
-    exec().then(() => setLoading(false))
-  }, [])
-
-  return { expenses, loading, error }
+  return { expenses: result, loading, error }
 }
 
 export default useExpenseList

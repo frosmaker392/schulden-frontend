@@ -1,23 +1,19 @@
-import { IonChip, IonItem, IonLabel } from '@ionic/react'
-import React from 'react'
-import { OfflinePerson, User } from '../graphql/generated'
+import { IonChip, IonItem } from '@ionic/react'
+import React, { ComponentProps } from 'react'
+import { Person } from '../typeDefs'
 
-interface PersonItemProps {
-  person: User | OfflinePerson
+interface PersonItemProps extends ComponentProps<typeof IonItem> {
+  person: Person
   isMe: boolean
 }
 
-const PersonItem: React.FC<PersonItemProps> = ({ person, isMe }) => {
+const PersonItem: React.FC<PersonItemProps> = ({ person, isMe, ...itemProps }) => {
   const name = 'email' in person ? `@${person.name}` : person.name
 
   return (
-    <IonItem>
-      <IonLabel>{name}</IonLabel>
-      {isMe && (
-        <IonChip color='primary' slot='end'>
-          Me
-        </IonChip>
-      )}
+    <IonItem {...itemProps}>
+      {name}
+      {isMe && <IonChip color='primary'>Me</IonChip>}
     </IonItem>
   )
 }

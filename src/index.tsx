@@ -4,13 +4,14 @@ import App from './App'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 import reportWebVitals from './reportWebVitals'
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client'
+import ApolloLinkTimeout from 'apollo-link-timeout'
 import AuthService from './services/AuthService'
 import { ServiceProvider, Services } from './providers/ServiceProvider'
 import TokenService from './services/TokenService'
+import ExpenseService from './services/ExpenseService'
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import ExpenseService from './services/ExpenseService'
 
 dayjs.extend(relativeTime)
 
@@ -31,8 +32,10 @@ const authLink = new ApolloLink((operation, forward) => {
   return forward(operation)
 })
 
+const timeoutLink = new ApolloLinkTimeout(10000)
+
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: authLink.concat(timeoutLink).concat(httpLink),
   cache: new InMemoryCache(),
 })
 

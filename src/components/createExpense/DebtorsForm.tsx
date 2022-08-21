@@ -1,42 +1,87 @@
 import {
   IonButton,
-  IonCol,
-  IonGrid,
-  IonInput,
+  IonIcon,
+  IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
   IonLabel,
-  IonRow,
+  IonList,
   IonSegment,
   IonSegmentButton,
 } from '@ionic/react'
-import React from 'react'
-import { OfflinePerson, User } from '../../graphql/generated'
+import { add, trash } from 'ionicons/icons'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { Debtor } from '../../graphql/generated'
+import useCurrentUser from '../../hooks/useCurrentUser'
+import { ExpenseServiceContext } from '../../providers/ExpenseServiceProvider'
+import { SplitMethod, SplitResult } from '../../services/ExpenseService'
+import { Optional, Person } from '../../typeDefs'
+import { toFormattedCurrency } from '../../utils'
+import CurrencyInput from '../form/CurrencyInput'
+import PersonInput from '../form/PersonInput'
 import PersonItem from '../PersonItem'
 
 import './DebtorsForm.css'
 
-const dummyPersons: (User | OfflinePerson)[] = [
-  {
-    id: 'test-id-1',
-    name: 'user1',
-    email: 'user1@test.com',
-  },
-  {
-    id: 'test-id-2',
-    name: 'user2',
-    email: 'user2@test.com',
-  },
-  {
-    id: 'test-id-3',
-    name: 'person1',
-  },
-]
+interface DebtorsFormProps {
+  totalAmount: number
+  onChange: (debtorsWithAmounts: Debtor[]) => void
+}
 
-const DebtorsForm: React.FC = () => {
+const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
+  const { user } = useCurrentUser()
+  const expenseService = useContext(ExpenseServiceContext)
+
+  const [splitResult, setSplitResult] = useState<SplitResult>({
+    debtors: [],
+    rest: 0,
+  })
+  const [debtors, setDebtors] = useState<Person[]>([])
+  const [inputtedAmounts, setInputtedAmounts] = useState<Optional<number>[]>([])
+  const [equalAmounts, setEqualAmounts] = useState<number[]>([])
+
+  const [personToAdd, setPersonToAdd] = useState<Optional<Person>>()
+  const [splitMethod, setSplitMethod] = useState<SplitMethod>('equal')
+
+  useEffect(() => {
+    const newSplitResult = expenseService.calculateSplit(
+      totalAmount,
+      splitMethod,
+      debtors,
+      inputtedAmounts,
+    )
+    setSplitResult(newSplitResult)
+    onChange(newSplitResult.debtors)
+  }, [debtors, inputtedAmounts, expenseService, totalAmount, splitMethod, onChange])
+
+  useEffect(() => {
+    if (splitMethod === 'equal') setEqualAmounts(splitResult.debtors.map(({ amount }) => amount))
+  }, [splitResult, splitMethod])
+
+  const updateAmount = useCallback((amount: number, index: number) => {
+    setInputtedAmounts((amts) => {
+      const newAmts = [...amts]
+      newAmts[index] = amount
+      return newAmts
+    })
+  }, [])
+
+  const addDebtor = useCallback(() => {
+    if (personToAdd) {
+      setDebtors((ds) => [...ds, personToAdd])
+      setPersonToAdd(undefined)
+    }
+  }, [personToAdd])
+
   return (
     <div className='debtors-form'>
       <p className='decor-label'>Expense should be split</p>
 
-      <IonSegment value='equal'>
+      <IonSegment
+        value={splitMethod}
+        onIonChange={(e) => setSplitMethod(e.detail.value as SplitMethod)}
+      >
         <IonSegmentButton value='equal'>
           <IonLabel>equally</IonLabel>
         </IonSegmentButton>
@@ -47,24 +92,43 @@ const DebtorsForm: React.FC = () => {
 
       <p className='decor-label'>between</p>
 
-      <IonGrid>
-        {dummyPersons.map((p) => (
-          <IonRow key={p.id}>
-            <IonCol size='12'>
-              <PersonItem person={p} isMe={p.id === 'test-id-1'} />
-            </IonCol>
-          </IonRow>
+      <IonList>
+        {debtors.map((d, i) => (
+          <IonItemSliding key={d.id}>
+            <IonItem class='person-item-container'>
+              <PersonItem
+                person={d}
+                isMe={d.id === user?.id}
+                className='person-item'
+                lines='none'
+              />
+              {splitMethod === 'equal' ? (
+                <p>{toFormattedCurrency(equalAmounts[i])}</p>
+              ) : (
+                <CurrencyInput value={inputtedAmounts[i]} onChange={(v) => updateAmount(v, i)} />
+              )}
+            </IonItem>
+
+            <IonItemOptions>
+              <IonItemOption color='danger'>
+                <IonIcon slot='icon-only' icon={trash} />
+              </IonItemOption>
+            </IonItemOptions>
+          </IonItemSliding>
         ))}
 
-        <IonRow>
-          <IonCol size='10'>
-            <IonInput placeholder='Enter name here' />
-          </IonCol>
-          <IonCol size='2'>
-            <IonButton>Add</IonButton>
-          </IonCol>
-        </IonRow>
-      </IonGrid>
+        <IonItem className='person-field'>
+          <PersonInput
+            person={personToAdd}
+            placeholder='Add debtor...'
+            existingPersons={debtors}
+            onChange={(p) => p && setPersonToAdd(p)}
+          />
+          <IonButton shape='round' onClick={addDebtor}>
+            <IonIcon icon={add} />
+          </IonButton>
+        </IonItem>
+      </IonList>
     </div>
   )
 }

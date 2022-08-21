@@ -1,0 +1,10 @@
+.currency-input {
+  background: transparent;
+  border: none;
+  text-align: right;
+  width: 6em;
+}
+
+.currency-input:focus {
+  outline: none;
+}

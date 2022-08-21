@@ -1,31 +1,19 @@
-import { useContext, useEffect, useState } from 'react'
-import { User } from '../graphql/generated'
+import { useContext } from 'react'
 import { AuthServiceContext } from '../providers/AuthServiceProvider'
-import { Optional } from '../typeDefs'
+import { useAsync } from 'react-async-hook'
 
 const useCurrentUser = () => {
   const authService = useContext(AuthServiceContext)
 
-  const [user, setUser] = useState<Optional<User>>()
-  const [pending, setPending] = useState(false)
-  const [error, setError] = useState('')
+  const { result, loading, error } = useAsync(async () => {
+    if (authService.cachedUser) return authService.cachedUser
 
-  useEffect(() => {
-    const execute = async () => {
-      setPending(true)
-
-      const userResult = await authService.getCurrentUser()
-
-      if ('errorMessage' in userResult) setError(userResult.errorMessage)
-      else setUser(userResult)
-
-      setPending(false)
-    }
-
-    execute()
+    const result = await authService.getCurrentUser()
+    if ('errorMessage' in result) throw new Error(result.errorMessage)
+    return result
   }, [])
 
-  return { user, pending, error }
+  return { user: result, loading, error }
 }
 
 export default useCurrentUser

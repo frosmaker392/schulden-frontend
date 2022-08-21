@@ -1,0 +1,16 @@
+query FindPersons($name: String!) {
+  findPersons(name: $name) {
+    ... on Persons {
+      persons {
+        id
+        name
+        ... on User {
+          email
+        }
+      }
+    }
+    ... on Error {
+      errorMessage
+    }
+  }
+}

@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 
 import './ExpenseList.css'
 import { ExpenseListElement } from '../services/ExpenseService'
+import { toFormattedCurrency } from '../utils'
 
 interface OutstandingLabelProps {
   amount: number
@@ -14,10 +15,7 @@ interface ExpenseListProps {
 }
 
 export const OutstandingLabel: React.FC<OutstandingLabelProps> = ({ amount }) => {
-  const formattedAmount = Intl.NumberFormat('de-DE', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(Math.abs(amount))
+  const formattedAmount = toFormattedCurrency(amount)
 
   const outstandingLabelOptions = {
     negative: ['You owe ', formattedAmount, 'negative'],

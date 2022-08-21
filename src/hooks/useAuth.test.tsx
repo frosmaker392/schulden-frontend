@@ -20,6 +20,7 @@ const successAuthService: IAuthService = {
   },
 
   getCurrentUser: () => Promise.resolve({ errorMessage: '' }),
+  cachedUser: undefined,
 }
 
 const failingAuthService: IAuthService = {
@@ -36,6 +37,7 @@ const failingAuthService: IAuthService = {
   },
 
   getCurrentUser: () => Promise.resolve({ errorMessage: '' }),
+  cachedUser: undefined,
 }
 
 const tokenSetter = jest.fn()

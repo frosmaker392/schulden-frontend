@@ -10,23 +10,29 @@ const useAuth = () => {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
 
-  const login = useCallback(async (form: LoginForm) => {
-    const result = await authService.login(form)
+  const login = useCallback(
+    async (form: LoginForm) => {
+      const result = await authService.login(form)
 
-    if ('token' in result) {
-      tokenService.storeToken(result.token)
-      setSuccess(true)
-    } else setError(result.errorMessage)
-  }, [])
+      if ('token' in result) {
+        tokenService.storeToken(result.token)
+        setSuccess(true)
+      } else setError(result.errorMessage)
+    },
+    [authService, tokenService],
+  )
 
-  const register = useCallback(async (form: RegisterForm) => {
-    const result = await authService.register(form)
+  const register = useCallback(
+    async (form: RegisterForm) => {
+      const result = await authService.register(form)
 
-    if ('token' in result) {
-      tokenService.storeToken(result.token)
-      setSuccess(true)
-    } else setError(result.errorMessage)
-  }, [])
+      if ('token' in result) {
+        tokenService.storeToken(result.token)
+        setSuccess(true)
+      } else setError(result.errorMessage)
+    },
+    [authService, tokenService],
+  )
 
   return { login, register, success, error }
 }

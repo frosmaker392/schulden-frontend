@@ -29,16 +29,19 @@ const Login: React.FC = () => {
       present('Login successful!', 2000)
       setRedirect(true)
     }
-  }, [success])
+  }, [present, success])
 
-  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
 
-    const email = formRef.current?.email.value ?? ''
-    const password = formRef.current?.password.value ?? ''
+      const email = formRef.current?.email.value ?? ''
+      const password = formRef.current?.password.value ?? ''
 
-    login({ email, password })
-  }, [])
+      login({ email, password })
+    },
+    [login],
+  )
 
   return (
     <IonPage>
