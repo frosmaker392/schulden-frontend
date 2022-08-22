@@ -37,6 +37,11 @@ const timeoutLink = new ApolloLinkTimeout(10000)
 const client = new ApolloClient({
   link: authLink.concat(timeoutLink).concat(httpLink),
   cache: new InMemoryCache(),
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'no-cache',
+    },
+  },
 })
 
 const authService = new AuthService(client)

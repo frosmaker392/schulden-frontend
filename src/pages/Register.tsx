@@ -27,15 +27,18 @@ const Register: React.FC = () => {
     if (success) setRedirect(true)
   }, [success])
 
-  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
 
-    const email = extractFromForm(formRef.current, 'email')
-    const username = extractFromForm(formRef.current, 'username')
-    const password = extractFromForm(formRef.current, 'password')
+      const email = extractFromForm(formRef.current, 'email')
+      const username = extractFromForm(formRef.current, 'username')
+      const password = extractFromForm(formRef.current, 'password')
 
-    register({ email, username, password })
-  }, [])
+      register({ email, username, password })
+    },
+    [register],
+  )
 
   return (
     <IonPage>

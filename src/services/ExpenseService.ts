@@ -107,6 +107,7 @@ export default class ExpenseService implements IExpenseService {
     })
 
     const data = res.data.getAllExpenses
+    console.log(data)
 
     if ('errorMessage' in data) {
       return data

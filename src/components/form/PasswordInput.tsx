@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { IonItem, IonLabel, IonInput, IonIcon } from '@ionic/react'
+import { IonInput, IonIcon } from '@ionic/react'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 
 import './PasswordInput.css'
+import InputFieldContainer from './InputFieldContainer'
 
 interface PasswordInputProps {
   label: string
@@ -13,8 +14,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ label, name }) => {
   const [show, setShow] = useState(false)
 
   return (
-    <IonItem lines='full'>
-      <IonLabel position='floating'>{label}</IonLabel>
+    <InputFieldContainer label={label}>
       <IonInput
         type={show ? 'text' : 'password'}
         name={name ?? 'password'}
@@ -28,7 +28,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ label, name }) => {
         onClick={() => setShow((v) => !v)}
         data-testid='icon'
       />
-    </IonItem>
+    </InputFieldContainer>
   )
 }
 

@@ -1,30 +1,50 @@
-import React from 'react'
-import NumberFormat from 'react-number-format'
+import React, { useRef, useState } from 'react'
+import { InputCustomEvent, IonInput } from '@ionic/react'
 import { toFormattedCurrency } from '../../utils'
-import './CurrencyInput.css'
+import InputFieldContainer from './InputFieldContainer'
 
 interface CurrencyInputProps {
-  value?: number
-  onChange: (v: number) => void
-  disabled?: boolean
+  label?: string
+  className?: string
+  onChange: (val: number) => void
 }
 
-const CurrencyInput: React.FC<CurrencyInputProps> = ({ value, onChange, disabled }) => {
-  return (
-    <NumberFormat
-      thousandSeparator='.'
-      decimalSeparator=','
-      decimalScale={2}
-      fixedDecimalScale
-      suffix=' €'
-      allowNegative={false}
+const CurrencyInput: React.FC<CurrencyInputProps> = ({ label, className, onChange }) => {
+  const inputRef = useRef<HTMLIonInputElement>(null)
+  const [canInput, setCanInput] = useState(false)
+  const [rawValue, setRawValue] = useState<number>()
+
+  const handleChange = (e: InputCustomEvent) => {
+    if (!canInput) return
+    const parsedNum = parseFloat(e.detail.value ?? '')
+    const parsedNumNotNaN = isNaN(parsedNum) ? undefined : parsedNum
+
+    setRawValue(parsedNumNotNaN)
+    parsedNumNotNaN && onChange(parsedNumNotNaN)
+  }
+
+  const handleFocus = () => {
+    inputRef.current?.setAttribute('value', rawValue?.toString() ?? '')
+    setCanInput(true)
+  }
+
+  const handleBlur = () => {
+    inputRef.current?.setAttribute('value', rawValue ? toFormattedCurrency(rawValue) : '')
+    setCanInput(false)
+  }
+
+  const input = (
+    <IonInput
+      inputMode='decimal'
+      ref={inputRef}
+      className={className}
+      onIonChange={handleChange}
+      onIonFocus={handleFocus}
+      onIonBlur={handleBlur}
       placeholder={toFormattedCurrency(0)}
-      className='currency-input'
-      defaultValue={value}
-      onValueChange={({ value }) => onChange(parseFloat(value))}
-      disabled={disabled}
     />
   )
-}
 
+  return label ? <InputFieldContainer label={label}>{input}</InputFieldContainer> : input
+}
 export default CurrencyInput

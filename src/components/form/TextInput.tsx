@@ -1,6 +1,7 @@
 import { TextFieldTypes } from '@ionic/core'
-import { IonItem, IonLabel, IonInput, InputCustomEvent } from '@ionic/react'
+import { IonInput, InputCustomEvent } from '@ionic/react'
 import React from 'react'
+import InputFieldContainer from './InputFieldContainer'
 
 interface TextInputProps {
   label: string
@@ -12,10 +13,7 @@ interface TextInputProps {
 
 const TextInput: React.FC<TextInputProps> = ({ label, type, name, id, onIonChange }) => {
   return (
-    <IonItem lines='full'>
-      <IonLabel position='floating' data-testid='label'>
-        {label}
-      </IonLabel>
+    <InputFieldContainer label={label}>
       <IonInput
         type={type}
         name={name ?? type}
@@ -24,7 +22,7 @@ const TextInput: React.FC<TextInputProps> = ({ label, type, name, id, onIonChang
         id={id}
         onIonChange={onIonChange}
       />
-    </IonItem>
+    </InputFieldContainer>
   )
 }
 

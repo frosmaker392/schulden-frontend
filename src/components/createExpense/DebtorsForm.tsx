@@ -103,9 +103,9 @@ const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
                 lines='none'
               />
               {splitMethod === 'equal' ? (
-                <p>{toFormattedCurrency(equalAmounts[i])}</p>
+                <IonLabel className='amount-text'>{toFormattedCurrency(equalAmounts[i])}</IonLabel>
               ) : (
-                <CurrencyInput value={inputtedAmounts[i]} onChange={(v) => updateAmount(v, i)} />
+                <CurrencyInput className='amount-text' onChange={(v) => updateAmount(v, i)} />
               )}
             </IonItem>
 

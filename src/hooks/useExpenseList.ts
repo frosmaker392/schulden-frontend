@@ -1,24 +1,36 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
+import { useAsync, useAsyncCallback } from 'react-async-hook'
 import { ExpenseServiceContext } from '../providers/ExpenseServiceProvider'
+import { ExpenseListElement } from '../services/ExpenseService'
 import useCurrentUser from './useCurrentUser'
 
-import { useAsync } from 'react-async-hook'
-
 const useExpenseList = () => {
-  const { user, error: userError } = useCurrentUser()
+  const { user } = useCurrentUser()
   const expenseService = useContext(ExpenseServiceContext)
 
-  const { result, loading, error } = useAsync(async () => {
-    if (!user) throw new Error('Cannot show expenses, please log in first!')
-    if (userError) throw userError
+  const [expenses, setExpenses] = useState<ExpenseListElement[]>()
 
-    const expensesResult = await expenseService.getAll(user?.id)
+  const fetchExpenses = useAsyncCallback(async () => {
+    if (!user) throw new Error('Cannot fetch expenses, please log in!')
 
-    if ('errorMessage' in expensesResult) throw new Error(expensesResult.errorMessage)
-    return expensesResult
-  }, [user, userError])
+    const result = await expenseService.getAll(user.id)
+    if ('errorMessage' in result) throw new Error(result.errorMessage)
+    return result
+  })
 
-  return { expenses: result, loading, error }
+  const fetchAndGet = useAsyncCallback(async () => {
+    const expenses = await fetchExpenses.execute()
+    setExpenses(expenses)
+  })
+
+  useAsync(fetchAndGet.execute, [user])
+
+  return {
+    expenses,
+    isLoading: fetchAndGet.loading,
+    error: fetchAndGet.error,
+    refresh: fetchAndGet.execute,
+  }
 }
 
 export default useExpenseList

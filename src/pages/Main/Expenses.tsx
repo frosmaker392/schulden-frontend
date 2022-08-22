@@ -1,10 +1,32 @@
-import { IonContent, IonHeader, IonLoading, IonPage, IonTitle, IonToolbar } from '@ionic/react'
+import {
+  IonContent,
+  IonFab,
+  IonFabButton,
+  IonHeader,
+  IonIcon,
+  IonPage,
+  IonRefresher,
+  IonRefresherContent,
+  IonSpinner,
+  IonTitle,
+  IonToolbar,
+  RefresherEventDetail,
+} from '@ionic/react'
+import { add } from 'ionicons/icons'
 import React from 'react'
 import ExpenseList from '../../components/ExpenseList'
 import useExpenseList from '../../hooks/useExpenseList'
 
 const Expenses: React.FC = () => {
-  const { expenses, loading } = useExpenseList()
+  const { expenses, isLoading, refresh } = useExpenseList()
+
+  const onRefresh = (e: CustomEvent<RefresherEventDetail>) => {
+    setTimeout(() => {
+      refresh().then(() => {
+        e.detail.complete()
+      })
+    }, 500)
+  }
 
   return (
     <IonPage>
@@ -13,16 +35,25 @@ const Expenses: React.FC = () => {
           <IonTitle>Expenses</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent>
         <IonHeader collapse='condense'>
           <IonToolbar>
             <IonTitle size='large'>Expenses</IonTitle>
           </IonToolbar>
         </IonHeader>
 
-        <IonLoading isOpen={loading} />
+        <IonRefresher slot='fixed' onIonRefresh={onRefresh}>
+          <IonRefresherContent pullingText='Pull to refresh' />
+        </IonRefresher>
 
+        {isLoading && <IonSpinner />}
         <ExpenseList expenses={expenses ?? []} />
+
+        <IonFab vertical='bottom' horizontal='end' slot='fixed'>
+          <IonFabButton routerLink='/createExpense'>
+            <IonIcon icon={add} />
+          </IonFabButton>
+        </IonFab>
       </IonContent>
     </IonPage>
   )

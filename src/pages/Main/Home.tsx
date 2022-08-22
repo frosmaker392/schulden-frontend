@@ -40,7 +40,7 @@ const Home: React.FC = () => {
         </IonCard>
 
         <IonFab vertical='bottom' horizontal='end' slot='fixed'>
-          <IonFabButton>
+          <IonFabButton routerLink='/createExpense'>
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>

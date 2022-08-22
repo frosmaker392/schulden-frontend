@@ -5,7 +5,6 @@ import {
   IonHeader,
   IonInput,
   IonItem,
-  IonLabel,
   IonList,
   IonPage,
   IonSearchbar,
@@ -18,10 +17,10 @@ import {
 import { OverlayEventDetail } from '@ionic/react/dist/types/components/react-component-lib/interfaces'
 import React, { useCallback, useState } from 'react'
 import useCurrentUser from '../../hooks/useCurrentUser'
-import useDebounce from '../../hooks/useDebounce'
 import useFindPersons from '../../hooks/useFindPersons'
 import { Optional, Person } from '../../typeDefs'
 import PersonItem from '../PersonItem'
+import InputFieldContainer from './InputFieldContainer'
 
 type ModalRole = 'submit' | 'cancel'
 
@@ -42,10 +41,8 @@ const PersonSearchModal: React.FC<PersonSearchModalProps> = ({ existingPersons, 
   const { user } = useCurrentUser()
 
   const [query, setQuery] = useState('')
-  const debouncedQuery = useDebounce(query, 200)
 
-  const { persons: suggestions, loading } = useFindPersons(debouncedQuery)
-  const debouncedLoading = useDebounce(loading, 200)
+  const { persons: suggestions, loading } = useFindPersons(query)
 
   const filteredSuggestions = existingPersons
     ? suggestions?.filter((s) => !existingPersons.some((p) => p.id === s.id))
@@ -71,9 +68,9 @@ const PersonSearchModal: React.FC<PersonSearchModalProps> = ({ existingPersons, 
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonSearchbar onIonChange={onSearchbarChange} />
+        <IonSearchbar debounce={200} onIonChange={onSearchbarChange} />
         <IonList>
-          {debouncedLoading ? (
+          {loading ? (
             <IonItem>
               <IonSpinner />
             </IonItem>
@@ -115,14 +112,7 @@ const PersonInput: React.FC<PersonInputProps> = ({
 
   const input = <IonInput value={person?.name} placeholder={placeholder} onClick={onClickInput} />
 
-  return label ? (
-    <IonItem lines='full'>
-      {<IonLabel position='floating'>{label}</IonLabel>}
-      {input}
-    </IonItem>
-  ) : (
-    input
-  )
+  return label ? <InputFieldContainer label={label}>{input}</InputFieldContainer> : input
 }
 
 export default PersonInput
