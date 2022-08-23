@@ -42,10 +42,11 @@ const PersonSearchModal: React.FC<PersonSearchModalProps> = ({ existingPersons, 
 
   const [query, setQuery] = useState('')
 
-  const { persons: suggestions, loading } = useFindPersons(query)
+  const { persons, loading } = useFindPersons(query)
+  const suggestions = user ? [user, ...(persons ?? [])] : persons ?? []
 
   const filteredSuggestions = existingPersons
-    ? suggestions?.filter((s) => !existingPersons.some((p) => p.id === s.id))
+    ? suggestions.filter((s) => !existingPersons.some((p) => p.id === s.id))
     : suggestions
 
   const onSearchbarChange = useCallback((e: SearchbarCustomEvent) => {

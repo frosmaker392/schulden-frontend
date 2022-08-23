@@ -12,7 +12,6 @@ import {
 } from '@ionic/react'
 import { add, trash } from 'ionicons/icons'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Debtor } from '../../graphql/generated'
 import useCurrentUser from '../../hooks/useCurrentUser'
 import { ExpenseServiceContext } from '../../providers/ExpenseServiceProvider'
 import { SplitMethod, SplitResult } from '../../services/ExpenseService'
@@ -26,7 +25,7 @@ import './DebtorsForm.css'
 
 interface DebtorsFormProps {
   totalAmount: number
-  onChange: (debtorsWithAmounts: Debtor[]) => void
+  onChange: (splitResult: SplitResult) => void
 }
 
 const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
@@ -52,7 +51,7 @@ const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
       inputtedAmounts,
     )
     setSplitResult(newSplitResult)
-    onChange(newSplitResult.debtors)
+    onChange(newSplitResult)
   }, [debtors, inputtedAmounts, expenseService, totalAmount, splitMethod, onChange])
 
   useEffect(() => {
@@ -95,7 +94,7 @@ const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
       <IonList>
         {debtors.map((d, i) => (
           <IonItemSliding key={d.id}>
-            <IonItem class='person-item-container'>
+            <IonItem class='list-elem debtor-entry'>
               <PersonItem
                 person={d}
                 isMe={d.id === user?.id}
@@ -103,7 +102,9 @@ const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
                 lines='none'
               />
               {splitMethod === 'equal' ? (
-                <IonLabel className='amount-text'>{toFormattedCurrency(equalAmounts[i])}</IonLabel>
+                <IonLabel className='amount-text' slot='end'>
+                  {toFormattedCurrency(equalAmounts[i])}
+                </IonLabel>
               ) : (
                 <CurrencyInput className='amount-text' onChange={(v) => updateAmount(v, i)} />
               )}
@@ -117,7 +118,16 @@ const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
           </IonItemSliding>
         ))}
 
-        <IonItem className='person-field'>
+        <IonItem className='list-elem'>
+          <IonLabel slot='end' className='rest-label '>
+            Rest:{' '}
+            <span className={splitResult.rest >= 0 ? 'positive' : 'negative'}>
+              {toFormattedCurrency(splitResult.rest)}
+            </span>
+          </IonLabel>
+        </IonItem>
+
+        <IonItem className='list-elem person-field'>
           <PersonInput
             person={personToAdd}
             placeholder='Add debtor...'

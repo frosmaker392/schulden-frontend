@@ -15,10 +15,14 @@ import {
 import { add } from 'ionicons/icons'
 import React from 'react'
 import ExpenseList from '../../components/ExpenseList'
+import useDebounce from '../../hooks/useDebounce'
 import useExpenseList from '../../hooks/useExpenseList'
+
+import './Expenses.css'
 
 const Expenses: React.FC = () => {
   const { expenses, isLoading, refresh } = useExpenseList()
+  const debouncedLoading = useDebounce(isLoading, 100)
 
   const onRefresh = (e: CustomEvent<RefresherEventDetail>) => {
     setTimeout(() => {
@@ -46,7 +50,7 @@ const Expenses: React.FC = () => {
           <IonRefresherContent pullingText='Pull to refresh' />
         </IonRefresher>
 
-        {isLoading && <IonSpinner />}
+        {debouncedLoading && <IonSpinner className='expenses-spinner' />}
         <ExpenseList expenses={expenses ?? []} />
 
         <IonFab vertical='bottom' horizontal='end' slot='fixed'>

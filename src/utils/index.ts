@@ -5,4 +5,4 @@ export const toFormattedCurrency = (amount: number): string =>
   Intl.NumberFormat('de-DE', {
     style: 'currency',
     currency: 'EUR',
-  }).format(Math.abs(amount))
+  }).format(amount)

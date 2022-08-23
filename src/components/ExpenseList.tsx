@@ -15,7 +15,7 @@ interface ExpenseListProps {
 }
 
 export const OutstandingLabel: React.FC<OutstandingLabelProps> = ({ amount }) => {
-  const formattedAmount = toFormattedCurrency(amount)
+  const formattedAmount = toFormattedCurrency(Math.abs(amount))
 
   const outstandingLabelOptions = {
     negative: ['You owe ', formattedAmount, 'negative'],

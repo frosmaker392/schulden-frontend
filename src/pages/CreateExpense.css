@@ -1,10 +1,14 @@
-.debtors-form {
+.create-expense-form > .debtors-form {
   margin-top: 1.3em;
 
   padding: 0 16px;
 }
 
-.create-btn {
+.create-expense-form > .form-error {
+  margin-top: 1em;
+}
+
+.create-expense-form > .create-btn {
   margin-top: 1em;
 
   width: 100%;
