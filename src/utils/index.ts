@@ -1,5 +1,4 @@
 export * from './FormUtils'
-export * from './TestUtils'
 
 export const toFormattedCurrency = (amount: number): string =>
   Intl.NumberFormat('de-DE', {

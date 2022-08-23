@@ -1,0 +1,19 @@
+query GetAllDebts {
+  getAllDebts {
+    ... on Debtors {
+      debtors {
+        person {
+          id
+          name
+          ... on User {
+            email
+          }
+        }
+        amount
+      }
+    }
+    ... on Error {
+      errorMessage
+    }
+  }
+}
