@@ -20,10 +20,10 @@ import { add } from 'ionicons/icons'
 
 import React, { useContext } from 'react'
 import { useAsync } from 'react-async-hook'
-import PersonItem from '../../components/PersonItem'
+import AmountLabel from '../../components/atoms/AmountLabel'
+import PersonItem from '../../components/molecules/PersonItem'
 import useDebounce from '../../hooks/useDebounce'
 import { DebtServiceContext } from '../../providers/DebtServiceProvider'
-import { toFormattedCurrency } from '../../utils'
 
 import './Home.css'
 
@@ -63,7 +63,7 @@ const Home: React.FC = () => {
               <IonCardHeader>
                 <IonCardSubtitle class='summary-subtitle'>{label}</IonCardSubtitle>
                 <IonCardTitle class='summary-title'>
-                  {result ? toFormattedCurrency(Math.abs(result.totalAmount)) : '--'}
+                  {result ? <AmountLabel amount={result.totalAmount} /> : '--'}
                 </IonCardTitle>
               </IonCardHeader>
 
@@ -77,7 +77,9 @@ const Home: React.FC = () => {
                       isMe={false}
                       color='light'
                     />
-                    <IonLabel slot='end'>{toFormattedCurrency(d.amount)}</IonLabel>
+                    <IonLabel slot='end'>
+                      <AmountLabel amount={d.amount} conditionallyColored />
+                    </IonLabel>
                   </IonItem>
                 ))}
               </IonCardContent>
@@ -86,7 +88,7 @@ const Home: React.FC = () => {
         </IonCard>
 
         <IonFab vertical='bottom' horizontal='end' slot='fixed'>
-          <IonFabButton routerLink='/createExpense'>
+          <IonFabButton routerLink='/expense/create'>
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>

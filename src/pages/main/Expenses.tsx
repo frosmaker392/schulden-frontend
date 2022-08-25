@@ -14,7 +14,7 @@ import {
 } from '@ionic/react'
 import { add } from 'ionicons/icons'
 import React from 'react'
-import ExpenseList from '../../components/ExpenseList'
+import ExpenseList from '../../components/organisms/ExpenseList'
 import useDebounce from '../../hooks/useDebounce'
 import useExpenseList from '../../hooks/useExpenseList'
 
@@ -54,7 +54,7 @@ const Expenses: React.FC = () => {
         <ExpenseList expenses={expenses ?? []} />
 
         <IonFab vertical='bottom' horizontal='end' slot='fixed'>
-          <IonFabButton routerLink='/createExpense'>
+          <IonFabButton routerLink='/expense/create'>
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>

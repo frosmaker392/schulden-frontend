@@ -1,26 +1,20 @@
-import React, { useState } from 'react'
+import React, { ComponentProps, useState } from 'react'
 import { IonInput, IonIcon } from '@ionic/react'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 
 import './PasswordInput.css'
-import InputFieldContainer from './InputFieldContainer'
+import InputFieldContainer from '../atoms/InputFieldContainer'
 
-interface PasswordInputProps {
+interface PasswordInputProps extends Omit<ComponentProps<typeof IonInput>, 'type'> {
   label: string
-  name?: string
 }
 
-const PasswordInput: React.FC<PasswordInputProps> = ({ label, name }) => {
+const PasswordInput: React.FC<PasswordInputProps> = ({ label, ...inputProps }) => {
   const [show, setShow] = useState(false)
 
   return (
     <InputFieldContainer label={label}>
-      <IonInput
-        type={show ? 'text' : 'password'}
-        name={name ?? 'password'}
-        required
-        data-testid='input'
-      />
+      <IonInput type={show ? 'text' : 'password'} {...inputProps} />
       <IonIcon
         slot='end'
         icon={show ? eyeOffOutline : eyeOutline}

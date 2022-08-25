@@ -1,0 +1,7 @@
+.amount-label.positive {
+  color: var(--ion-color-success);
+}
+
+.amount-label.negative {
+  color: var(--ion-color-danger);
+}

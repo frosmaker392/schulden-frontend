@@ -16,10 +16,10 @@ import useCurrentUser from '../../hooks/useCurrentUser'
 import { ExpenseServiceContext } from '../../providers/ExpenseServiceProvider'
 import { SplitMethod, SplitResult } from '../../services/ExpenseService'
 import { Optional, Person } from '../../typeDefs'
-import { toFormattedCurrency } from '../../utils'
-import CurrencyInput from '../form/CurrencyInput'
-import PersonInput from '../form/PersonInput'
-import PersonItem from '../PersonItem'
+import AmountLabel from '../atoms/AmountLabel'
+import CurrencyInput from '../molecules/CurrencyInput'
+import PersonInput from '../molecules/PersonInput'
+import PersonItem from '../molecules/PersonItem'
 
 import './DebtorsForm.css'
 
@@ -103,7 +103,7 @@ const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
               />
               {splitMethod === 'equal' ? (
                 <IonLabel className='amount-text' slot='end'>
-                  {toFormattedCurrency(equalAmounts[i])}
+                  <AmountLabel amount={equalAmounts[i]} />
                 </IonLabel>
               ) : (
                 <CurrencyInput className='amount-text' onChange={(v) => updateAmount(v, i)} />
@@ -120,10 +120,7 @@ const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
 
         <IonItem className='list-elem'>
           <IonLabel slot='end' className='rest-label '>
-            Rest:{' '}
-            <span className={splitResult.rest >= 0 ? 'positive' : 'negative'}>
-              {toFormattedCurrency(splitResult.rest)}
-            </span>
+            Rest: <AmountLabel amount={splitResult.rest} allowNegative conditionallyColored />
           </IonLabel>
         </IonItem>
 

@@ -1,6 +1,6 @@
 import { IonChip, IonItem } from '@ionic/react'
 import React, { ComponentProps } from 'react'
-import { Person } from '../typeDefs'
+import { Person } from '../../typeDefs'
 
 interface PersonItemProps extends ComponentProps<typeof IonItem> {
   person: Person

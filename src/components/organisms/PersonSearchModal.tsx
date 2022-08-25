@@ -1,40 +1,28 @@
 import {
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonInput,
-  IonItem,
-  IonList,
-  IonPage,
-  IonSearchbar,
-  IonSpinner,
-  IonTitle,
-  IonToolbar,
   SearchbarCustomEvent,
-  useIonModal,
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonButton,
+  IonTitle,
+  IonContent,
+  IonSearchbar,
+  IonList,
+  IonItem,
+  IonSpinner,
 } from '@ionic/react'
-import { OverlayEventDetail } from '@ionic/react/dist/types/components/react-component-lib/interfaces'
 import React, { useCallback, useState } from 'react'
 import useCurrentUser from '../../hooks/useCurrentUser'
 import useFindPersons from '../../hooks/useFindPersons'
-import { Optional, Person } from '../../typeDefs'
-import PersonItem from '../PersonItem'
-import InputFieldContainer from './InputFieldContainer'
+import { Person, Optional } from '../../typeDefs'
+import PersonItem from '../molecules/PersonItem'
 
 type ModalRole = 'submit' | 'cancel'
 
 interface PersonSearchModalProps {
   existingPersons?: Person[]
   onDismiss: (person: Optional<Person>, role: ModalRole) => void
-}
-
-interface PersonInputProps {
-  label?: string
-  placeholder?: string
-  person?: Person
-  existingPersons?: Person[]
-  onChange: (person: Optional<Person>) => void
 }
 
 const PersonSearchModal: React.FC<PersonSearchModalProps> = ({ existingPersons, onDismiss }) => {
@@ -92,28 +80,4 @@ const PersonSearchModal: React.FC<PersonSearchModalProps> = ({ existingPersons, 
   )
 }
 
-const PersonInput: React.FC<PersonInputProps> = ({
-  label,
-  placeholder,
-  person,
-  existingPersons,
-  onChange,
-}) => {
-  const [present, dismiss] = useIonModal(PersonSearchModal, {
-    existingPersons,
-    onDismiss: (data: Person, role?: string) => dismiss(data, role),
-  })
-
-  const onClickInput = () =>
-    present({
-      onWillDismiss(e: CustomEvent<OverlayEventDetail>) {
-        if (e.detail.role === 'submit') onChange(e.detail.data)
-      },
-    })
-
-  const input = <IonInput value={person?.name} placeholder={placeholder} onClick={onClickInput} />
-
-  return label ? <InputFieldContainer label={label}>{input}</InputFieldContainer> : input
-}
-
-export default PersonInput
+export default PersonSearchModal

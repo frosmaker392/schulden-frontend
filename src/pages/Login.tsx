@@ -12,9 +12,10 @@ import './LoginRegister.css'
 import useAuth from '../hooks/useAuth'
 import { Redirect } from 'react-router'
 
-import FormError from '../components/form/FormError'
-import PasswordInput from '../components/form/PasswordInput'
-import TextInput from '../components/form/TextInput'
+import TextInput from '../components/molecules/TextInput'
+import FormError from '../components/atoms/FormError'
+import { extractFromForm } from '../utils'
+import PasswordInput from '../components/molecules/PasswordInput'
 
 const Login: React.FC = () => {
   const [present] = useIonToast()
@@ -26,7 +27,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (success) {
-      present('Login successful!', 2000)
+      present(`Logged in as ${extractFromForm(formRef.current, 'email')}`, 2000)
       setRedirect(true)
     }
   }, [present, success])
@@ -35,8 +36,8 @@ const Login: React.FC = () => {
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault()
 
-      const email = formRef.current?.email.value ?? ''
-      const password = formRef.current?.password.value ?? ''
+      const email = extractFromForm(formRef.current, 'email')
+      const password = extractFromForm(formRef.current, 'password')
 
       login({ email, password })
     },
@@ -55,8 +56,8 @@ const Login: React.FC = () => {
 
       <IonContent>
         <form className='login-register' onSubmit={handleSubmit} ref={formRef}>
-          <TextInput label='Email' type='email' />
-          <PasswordInput label='Password' />
+          <TextInput label='Email' type='email' name='email' required />
+          <PasswordInput label='Password' name='email' required />
 
           <FormError error={error} />
 

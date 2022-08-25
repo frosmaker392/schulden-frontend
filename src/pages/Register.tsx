@@ -8,24 +8,30 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonToast,
 } from '@ionic/react'
 import './LoginRegister.css'
 import useAuth from '../hooks/useAuth'
-import FormError from '../components/form/FormError'
 import { extractFromForm } from '../utils/FormUtils'
 import { Redirect } from 'react-router'
-import PasswordInput from '../components/form/PasswordInput'
-import TextInput from '../components/form/TextInput'
+import TextInput from '../components/molecules/TextInput'
+import FormError from '../components/atoms/FormError'
+import PasswordInput from '../components/molecules/PasswordInput'
 
 const Register: React.FC = () => {
+  const [present] = useIonToast()
+
   const formRef = useRef<HTMLFormElement>(null)
   const [redirect, setRedirect] = useState(false)
 
   const { register, success, error } = useAuth()
 
   useEffect(() => {
-    if (success) setRedirect(true)
-  }, [success])
+    if (success) {
+      present(`Logged in as ${extractFromForm(formRef.current, 'email')}`, 2000)
+      setRedirect(true)
+    }
+  }, [present, success])
 
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
@@ -55,9 +61,9 @@ const Register: React.FC = () => {
 
       <IonContent>
         <form className='login-register' ref={formRef} onSubmit={handleSubmit}>
-          <TextInput label='Email' type='email' />
-          <TextInput label='Username' type='text' name='username' />
-          <PasswordInput label='Password' />
+          <TextInput label='Email' type='email' name='email' required />
+          <TextInput label='Username' type='text' name='username' required />
+          <PasswordInput label='Password' name='password' required />
 
           <FormError error={error} />
 

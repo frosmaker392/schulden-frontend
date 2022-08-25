@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { InputCustomEvent, IonInput } from '@ionic/react'
 import { toFormattedCurrency } from '../../utils'
-import InputFieldContainer from './InputFieldContainer'
+import InputFieldContainer from '../atoms/InputFieldContainer'
 
 interface CurrencyInputProps {
   label?: string
@@ -47,4 +47,5 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({ label, className, onChang
 
   return label ? <InputFieldContainer label={label}>{input}</InputFieldContainer> : input
 }
+
 export default CurrencyInput

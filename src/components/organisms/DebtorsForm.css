@@ -29,9 +29,5 @@
 }
 
 .debtors-form .rest-label > .positive {
-  color: var(--ion-color-success);
-}
-
-.debtors-form .rest-label > .negative {
   color: var(--ion-color-danger);
 }

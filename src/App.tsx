@@ -22,11 +22,11 @@ import '@ionic/react/css/display.css'
 /* Theme variables */
 import './theme/variables.css'
 
-import Main from './pages/Main/Main'
+import Main from './pages/main/Main'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import AuthGate from './pages/AuthGate'
-import CreateExpense from './pages/CreateExpense'
+import CreateExpense from './pages/expense/CreateExpense'
 
 setupIonicReact()
 
@@ -46,7 +46,7 @@ const App: React.FC = () => (
         <Route exact path='/register'>
           <Register />
         </Route>
-        <Route exact path='/createExpense'>
+        <Route exact path='/expense/create'>
           <CreateExpense />
         </Route>
         <Route exact path='/'>
