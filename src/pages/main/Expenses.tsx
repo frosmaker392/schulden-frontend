@@ -13,7 +13,7 @@ import {
   RefresherEventDetail,
 } from '@ionic/react'
 import { add } from 'ionicons/icons'
-import React from 'react'
+import React, { useCallback } from 'react'
 import ExpenseList from '../../components/organisms/ExpenseList'
 import useDebounce from '../../hooks/useDebounce'
 import useExpenseList from '../../hooks/useExpenseList'
@@ -24,13 +24,16 @@ const Expenses: React.FC = () => {
   const { expenses, isLoading, refresh } = useExpenseList()
   const debouncedLoading = useDebounce(isLoading, 100)
 
-  const onRefresh = (e: CustomEvent<RefresherEventDetail>) => {
-    setTimeout(() => {
-      refresh().then(() => {
-        e.detail.complete()
-      })
-    }, 500)
-  }
+  const onRefresh = useCallback(
+    (e: CustomEvent<RefresherEventDetail>) => {
+      setTimeout(() => {
+        refresh().then(() => {
+          e.detail.complete()
+        })
+      }, 500)
+    },
+    [refresh],
+  )
 
   return (
     <IonPage>

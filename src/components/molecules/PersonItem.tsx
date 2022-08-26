@@ -13,7 +13,7 @@ const PersonItem: React.FC<PersonItemProps> = ({ person, isMe, ...itemProps }) =
   return (
     <IonItem {...itemProps}>
       {name}
-      {isMe && <IonChip color='primary'>Me</IonChip>}
+      {isMe && <IonChip color='primary'>You</IonChip>}
     </IonItem>
   )
 }

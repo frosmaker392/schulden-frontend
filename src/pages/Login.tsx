@@ -57,7 +57,7 @@ const Login: React.FC = () => {
       <IonContent>
         <form className='login-register' onSubmit={handleSubmit} ref={formRef}>
           <TextInput label='Email' type='email' name='email' required />
-          <PasswordInput label='Password' name='email' required />
+          <PasswordInput label='Password' name='password' required />
 
           <FormError error={error} />
 

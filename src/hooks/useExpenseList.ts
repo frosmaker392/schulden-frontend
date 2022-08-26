@@ -10,26 +10,22 @@ const useExpenseList = () => {
 
   const [expenses, setExpenses] = useState<ExpenseListElement[]>()
 
-  const fetchExpenses = useAsyncCallback(async () => {
+  const fetchAndSet = useAsyncCallback(async () => {
     if (!user) throw new Error('Cannot fetch expenses, please log in!')
 
     const result = await expenseService.getAll(user.id)
     if ('errorMessage' in result) throw new Error(result.errorMessage)
-    return result
+
+    setExpenses(result)
   })
 
-  const fetchAndGet = useAsyncCallback(async () => {
-    const expenses = await fetchExpenses.execute()
-    setExpenses(expenses)
-  })
-
-  useAsync(fetchAndGet.execute, [user])
+  useAsync(fetchAndSet.execute, [user])
 
   return {
     expenses,
-    isLoading: fetchAndGet.loading,
-    error: fetchAndGet.error,
-    refresh: fetchAndGet.execute,
+    isLoading: fetchAndSet.loading,
+    error: fetchAndSet.error,
+    refresh: fetchAndSet.execute,
   }
 }
 

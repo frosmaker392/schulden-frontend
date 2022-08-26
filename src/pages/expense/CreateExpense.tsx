@@ -8,10 +8,10 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonRouter,
   useIonToast,
 } from '@ionic/react'
 import React, { useCallback, useState } from 'react'
-import { useHistory } from 'react-router'
 import FormError from '../../components/atoms/FormError'
 import CurrencyInput from '../../components/molecules/CurrencyInput'
 import PersonInput from '../../components/molecules/PersonInput'
@@ -24,6 +24,9 @@ import { Person } from '../../typeDefs'
 import './CreateExpense.css'
 
 const CreateExpense: React.FC = () => {
+  const [present] = useIonToast()
+  const r = useIonRouter()
+
   const [name, setName] = useState('')
   const [totalAmount, setTotalAmount] = useState(0)
   const [payer, setPayer] = useState<Person>()
@@ -31,9 +34,6 @@ const CreateExpense: React.FC = () => {
     debtors: [],
     rest: 0,
   })
-
-  const [present] = useIonToast()
-  const h = useHistory()
 
   const { createExpense, loading, error } = useCreateExpense({
     name,
@@ -48,17 +48,20 @@ const CreateExpense: React.FC = () => {
 
   const onSubmit = useCallback(() => {
     createExpense().then((e) => {
-      h.goBack()
+      const lastRoute = r.routeInfo.pushedByRoute
+
+      if (lastRoute) r.push(lastRoute, 'back')
+      else r.push('/main', 'back')
       present(`Successfully created expense "${e.name}"`, 2000)
     })
-  }, [createExpense, h, present])
+  }, [createExpense, present, r])
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot='start'>
-            <IonBackButton />
+            <IonBackButton defaultHref='/main' />
           </IonButtons>
           <IonTitle>Create Expense</IonTitle>
         </IonToolbar>

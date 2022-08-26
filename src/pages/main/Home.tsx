@@ -12,33 +12,39 @@ import {
   IonItem,
   IonLabel,
   IonPage,
+  IonRefresher,
+  IonRefresherContent,
   IonSpinner,
   IonTitle,
   IonToolbar,
+  RefresherEventDetail,
 } from '@ionic/react'
 import { add } from 'ionicons/icons'
 
-import React, { useContext } from 'react'
-import { useAsync } from 'react-async-hook'
+import React, { useCallback } from 'react'
 import AmountLabel from '../../components/atoms/AmountLabel'
 import PersonItem from '../../components/molecules/PersonItem'
 import useDebounce from '../../hooks/useDebounce'
-import { DebtServiceContext } from '../../providers/DebtServiceProvider'
+import useDebtSummary from '../../hooks/useDebtSummary'
 
 import './Home.css'
 
 const Home: React.FC = () => {
-  const debtService = useContext(DebtServiceContext)
+  const { summary, isLoading, refresh } = useDebtSummary()
+  const debouncedLoading = useDebounce(isLoading, 100)
 
-  const { result, loading } = useAsync(async () => {
-    const data = await debtService.getDebtSummary()
+  const onRefresh = useCallback(
+    (e: CustomEvent<RefresherEventDetail>) => {
+      setTimeout(() => {
+        refresh().then(() => {
+          e.detail.complete()
+        })
+      }, 500)
+    },
+    [refresh],
+  )
 
-    if ('errorMessage' in data) throw new Error(data.errorMessage)
-    return data
-  }, [debtService])
-  const debouncedLoading = useDebounce(loading, 100)
-
-  const label = result ? (result.totalAmount > 0 ? 'You would receive' : 'You owe people') : ''
+  const label = summary ? (summary.totalAmount > 0 ? 'You would receive' : 'You owe people') : ''
 
   return (
     <IonPage>
@@ -55,6 +61,10 @@ const Home: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
+        <IonRefresher slot='fixed' onIonRefresh={onRefresh}>
+          <IonRefresherContent pullingText='Pull to refresh' />
+        </IonRefresher>
+
         <IonCard>
           {debouncedLoading ? (
             <IonSpinner class='loading-spinner' />
@@ -63,12 +73,12 @@ const Home: React.FC = () => {
               <IonCardHeader>
                 <IonCardSubtitle class='summary-subtitle'>{label}</IonCardSubtitle>
                 <IonCardTitle class='summary-title'>
-                  {result ? <AmountLabel amount={result.totalAmount} /> : '--'}
+                  {summary ? <AmountLabel amount={summary.totalAmount} /> : '--'}
                 </IonCardTitle>
               </IonCardHeader>
 
               <IonCardContent>
-                {result?.topDebtors.map((d) => (
+                {summary?.topDebtors.map((d) => (
                   <IonItem lines='none' key={d.person.id} class='top-debtor-entry' color='light'>
                     <PersonItem
                       slot='start'

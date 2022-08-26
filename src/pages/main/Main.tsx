@@ -2,7 +2,7 @@ import React from 'react'
 import { IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs } from '@ionic/react'
 import { home, cash } from 'ionicons/icons'
 import Home from './Home'
-import { Route } from 'react-router'
+import { Redirect, Route } from 'react-router'
 import Expenses from './Expenses'
 
 import './Main.css'
@@ -11,11 +11,15 @@ const Main: React.FC = () => {
   return (
     <IonTabs>
       <IonRouterOutlet>
-        <Route path='/main/home'>
+        <Redirect exact path='/main' to='/main/home' />
+        <Route exact path='/main/home'>
           <Home />
         </Route>
-        <Route path='/main/expenses'>
+        <Route exact path='/main/expenses'>
           <Expenses />
+        </Route>
+        <Route exact path='/main'>
+          <Redirect to='/main/home' />
         </Route>
       </IonRouterOutlet>
 
