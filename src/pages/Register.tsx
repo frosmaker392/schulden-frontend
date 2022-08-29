@@ -11,7 +11,7 @@ import {
   useIonToast,
 } from '@ionic/react'
 import './LoginRegister.css'
-import useAuth from '../hooks/useAuth'
+import useRegister from '../hooks/useRegister'
 import { extractFromForm } from '../utils/FormUtils'
 import { Redirect } from 'react-router'
 import TextInput from '../components/molecules/TextInput'
@@ -24,7 +24,7 @@ const Register: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null)
   const [redirect, setRedirect] = useState(false)
 
-  const { register, success, error } = useAuth()
+  const { register, success, error } = useRegister()
 
   useEffect(() => {
     if (success) {
@@ -65,7 +65,7 @@ const Register: React.FC = () => {
           <TextInput label='Username' type='text' name='username' required />
           <PasswordInput label='Password' name='password' required />
 
-          <FormError error={error} />
+          <FormError error={error?.message} />
 
           <IonButton type='submit' class='submit-btn'>
             Register

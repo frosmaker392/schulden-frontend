@@ -30,8 +30,8 @@ import useDebtSummary from '../../hooks/useDebtSummary'
 import './Home.css'
 
 const Home: React.FC = () => {
-  const { summary, isLoading, refresh } = useDebtSummary()
-  const debouncedLoading = useDebounce(isLoading, 100)
+  const { summary, loading, refresh } = useDebtSummary()
+  const debouncedLoading = useDebounce(loading, 100)
 
   const onRefresh = useCallback(
     (e: CustomEvent<RefresherEventDetail>) => {

@@ -9,13 +9,13 @@ import {
   useIonToast,
 } from '@ionic/react'
 import './LoginRegister.css'
-import useAuth from '../hooks/useAuth'
 import { Redirect } from 'react-router'
 
 import TextInput from '../components/molecules/TextInput'
 import FormError from '../components/atoms/FormError'
 import { extractFromForm } from '../utils'
 import PasswordInput from '../components/molecules/PasswordInput'
+import useLogin from '../hooks/useLogin'
 
 const Login: React.FC = () => {
   const [present] = useIonToast()
@@ -23,7 +23,7 @@ const Login: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null)
   const [redirect, setRedirect] = useState(false)
 
-  const { login, success, error } = useAuth()
+  const { login, success, loading, error } = useLogin()
 
   useEffect(() => {
     if (success) {
@@ -59,12 +59,12 @@ const Login: React.FC = () => {
           <TextInput label='Email' type='email' name='email' required />
           <PasswordInput label='Password' name='password' required />
 
-          <FormError error={error} />
+          <FormError error={error?.message} />
 
-          <IonButton type='submit' class='submit-btn'>
+          <IonButton type='submit' class='submit-btn' disabled={loading}>
             Login
           </IonButton>
-          <IonButton fill='clear' routerLink='/register'>
+          <IonButton fill='clear' routerLink='/register' disabled={loading}>
             Register
           </IonButton>
         </form>

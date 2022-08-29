@@ -2,9 +2,10 @@ import { IonItem, IonLabel, IonList, IonNote } from '@ionic/react'
 import React, { ComponentProps } from 'react'
 import dayjs from 'dayjs'
 
-import './ExpenseList.css'
-import { ExpenseListElement } from '../../services/ExpenseService'
+import { ExpenseListElement } from '../../typeDefs'
 import AmountLabel from '../atoms/AmountLabel'
+
+import './ExpenseList.css'
 
 interface OutstandingNoteProps extends ComponentProps<typeof IonNote> {
   amount: number

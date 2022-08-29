@@ -18,8 +18,7 @@ import PersonInput from '../../components/molecules/PersonInput'
 import TextInput from '../../components/molecules/TextInput'
 import DebtorsForm from '../../components/organisms/DebtorsForm'
 import useCreateExpense from '../../hooks/useCreateExpense'
-import { SplitResult } from '../../services/ExpenseService'
-import { Person } from '../../typeDefs'
+import { Person, SplitResult } from '../../typeDefs'
 
 import './CreateExpense.css'
 
@@ -35,26 +34,26 @@ const CreateExpense: React.FC = () => {
     rest: 0,
   })
 
-  const { createExpense, loading, error } = useCreateExpense({
-    name,
-    totalAmount,
-    payer,
-    splitResult,
-  })
+  const { createExpense, data, loading, error } = useCreateExpense()
 
   const onNameChange = useCallback((e: InputCustomEvent) => {
     setName(e.detail.value ?? '')
   }, [])
 
   const onSubmit = useCallback(() => {
-    createExpense().then((e) => {
+    createExpense({
+      name,
+      totalAmount,
+      payer,
+      splitResult,
+    }).then(() => {
       const lastRoute = r.routeInfo.pushedByRoute
 
       if (lastRoute) r.push(lastRoute, 'back')
       else r.push('/main', 'back')
-      present(`Successfully created expense "${e.name}"`, 2000)
+      present(`Successfully created expense "${data?.createExpense.name}"`, 2000)
     })
-  }, [createExpense, present, r])
+  }, [createExpense, data?.createExpense.name, name, payer, present, r, splitResult, totalAmount])
 
   return (
     <IonPage>
@@ -74,7 +73,7 @@ const CreateExpense: React.FC = () => {
 
         <DebtorsForm onChange={setSplitResult} totalAmount={totalAmount} />
 
-        <FormError error={error?.message} />
+        <FormError error={error} />
 
         <IonButton disabled={loading} class='create-btn' onClick={onSubmit}>
           Create

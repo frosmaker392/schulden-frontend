@@ -21,8 +21,8 @@ import useExpenseList from '../../hooks/useExpenseList'
 import './Expenses.css'
 
 const Expenses: React.FC = () => {
-  const { expenses, isLoading, refresh } = useExpenseList()
-  const debouncedLoading = useDebounce(isLoading, 100)
+  const { expenses, loading, refresh } = useExpenseList()
+  const debouncedLoading = useDebounce(loading, 100)
 
   const onRefresh = useCallback(
     (e: CustomEvent<RefresherEventDetail>) => {

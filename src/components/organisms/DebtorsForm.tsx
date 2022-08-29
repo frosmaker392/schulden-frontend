@@ -11,11 +11,10 @@ import {
   IonSegmentButton,
 } from '@ionic/react'
 import { add, trash } from 'ionicons/icons'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import useCurrentUser from '../../hooks/useCurrentUser'
-import { ExpenseServiceContext } from '../../providers/ExpenseServiceProvider'
-import { SplitMethod, SplitResult } from '../../services/ExpenseService'
-import { Optional, Person } from '../../typeDefs'
+import { Optional, Person, SplitMethod, SplitResult } from '../../typeDefs'
+import { calculateSplit } from '../../utils'
 import AmountLabel from '../atoms/AmountLabel'
 import CurrencyInput from '../molecules/CurrencyInput'
 import PersonInput from '../molecules/PersonInput'
@@ -30,7 +29,6 @@ interface DebtorsFormProps {
 
 const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
   const { user } = useCurrentUser()
-  const expenseService = useContext(ExpenseServiceContext)
 
   const [splitResult, setSplitResult] = useState<SplitResult>({
     debtors: [],
@@ -44,15 +42,10 @@ const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
   const [splitMethod, setSplitMethod] = useState<SplitMethod>('equal')
 
   useEffect(() => {
-    const newSplitResult = expenseService.calculateSplit(
-      totalAmount,
-      splitMethod,
-      debtors,
-      inputtedAmounts,
-    )
+    const newSplitResult = calculateSplit(totalAmount, splitMethod, debtors, inputtedAmounts)
     setSplitResult(newSplitResult)
     onChange(newSplitResult)
-  }, [debtors, inputtedAmounts, expenseService, totalAmount, splitMethod, onChange])
+  }, [debtors, inputtedAmounts, totalAmount, splitMethod, onChange])
 
   useEffect(() => {
     if (splitMethod === 'equal') setEqualAmounts(splitResult.debtors.map(({ amount }) => amount))

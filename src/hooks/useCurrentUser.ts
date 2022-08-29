@@ -1,19 +1,24 @@
-import { useContext } from 'react'
-import { AuthServiceContext } from '../providers/AuthServiceProvider'
+import { useLazyQuery } from '@apollo/client'
+import { useContext, useState } from 'react'
 import { useAsync } from 'react-async-hook'
+import { CurrentUserDocument, User } from '../graphql/generated'
+import { CredentialsCacheContext } from '../utils/CredentialsCache'
 
 const useCurrentUser = () => {
-  const authService = useContext(AuthServiceContext)
+  const credentialsCache = useContext(CredentialsCacheContext)
+  const [currentUserQuery, { loading, error }] = useLazyQuery(CurrentUserDocument)
 
-  const { result, loading, error } = useAsync(async () => {
-    if (authService.cachedUser) return authService.cachedUser
+  const [user, setUser] = useState<User>()
 
-    const result = await authService.getCurrentUser()
-    if ('errorMessage' in result) throw new Error(result.errorMessage)
-    return result
+  useAsync(async () => {
+    if (credentialsCache.user) setUser(credentialsCache.user)
+    else {
+      const result = (await currentUserQuery()).data
+      setUser(result?.currentUser ?? undefined)
+    }
   }, [])
 
-  return { user: result, loading, error }
+  return { user, loading, error }
 }
 
 export default useCurrentUser

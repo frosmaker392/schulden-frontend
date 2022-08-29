@@ -3,26 +3,21 @@ import ReactDOM from 'react-dom'
 import App from './App'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 import reportWebVitals from './reportWebVitals'
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client'
+import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client'
 import ApolloLinkTimeout from 'apollo-link-timeout'
-import AuthService from './services/AuthService'
-import { ServiceProvider, Services } from './providers/ServiceProvider'
-import TokenService from './services/TokenService'
-import ExpenseService from './services/ExpenseService'
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import DebtService from './services/DebtService'
+import { CredentialsCache, CredentialsCacheContext } from './utils/CredentialsCache'
 
 dayjs.extend(relativeTime)
-
-const tokenService = new TokenService(localStorage)
 
 // https://medium.com/risan/set-authorization-header-with-apollo-client-e934e6517ccf
 const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
 
+const credentialsCache = new CredentialsCache()
 const authLink = new ApolloLink((operation, forward) => {
-  const token = tokenService.getToken()
+  const token = credentialsCache.getToken()
 
   operation.setContext({
     headers: {
@@ -45,22 +40,13 @@ const client = new ApolloClient({
   },
 })
 
-const authService = new AuthService(client)
-const expenseService = new ExpenseService(client)
-const debtService = new DebtService(client)
-
-const services: Services = {
-  auth: authService,
-  token: tokenService,
-  expense: expenseService,
-  debt: debtService,
-}
-
 ReactDOM.render(
   <React.StrictMode>
-    <ServiceProvider services={services}>
-      <App />
-    </ServiceProvider>
+    <ApolloProvider client={client}>
+      <CredentialsCacheContext.Provider value={new CredentialsCache()}>
+        <App />
+      </CredentialsCacheContext.Provider>
+    </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 )

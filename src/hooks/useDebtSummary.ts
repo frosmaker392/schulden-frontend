@@ -1,26 +1,14 @@
-import { useContext, useState } from 'react'
-import { useAsync, useAsyncCallback } from 'react-async-hook'
-import { DebtSummary } from '../graphql/generated'
-import { DebtServiceContext } from '../providers/DebtServiceProvider'
+import { useQuery } from '@apollo/client'
+import { GetDebtSummaryDocument } from '../graphql/generated'
 
 const useDebtSummary = () => {
-  const debtService = useContext(DebtServiceContext)
-
-  const [summary, setSummary] = useState<DebtSummary>()
-
-  const fetchAndSet = useAsyncCallback(async () => {
-    const data = await debtService.getDebtSummary()
-    if ('errorMessage' in data) throw new Error(data.errorMessage)
-    setSummary(data)
-  })
-
-  useAsync(fetchAndSet.execute, [])
+  const { data, loading, error, refetch } = useQuery(GetDebtSummaryDocument)
 
   return {
-    summary,
-    isLoading: fetchAndSet.loading,
-    error: fetchAndSet.error,
-    refresh: fetchAndSet.execute,
+    summary: data?.getDebtSummary,
+    loading,
+    error,
+    refresh: refetch,
   }
 }
 

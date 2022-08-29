@@ -27,11 +27,12 @@ interface PersonSearchModalProps {
 
 const PersonSearchModal: React.FC<PersonSearchModalProps> = ({ existingPersons, onDismiss }) => {
   const { user } = useCurrentUser()
-
   const [query, setQuery] = useState('')
 
   const { persons, loading } = useFindPersons(query)
-  const suggestions = user ? [user, ...(persons ?? [])] : persons ?? []
+
+  let suggestions = persons ?? []
+  if (user && query.length === 0) suggestions = [user, ...suggestions]
 
   const filteredSuggestions = existingPersons
     ? suggestions.filter((s) => !existingPersons.some((p) => p.id === s.id))

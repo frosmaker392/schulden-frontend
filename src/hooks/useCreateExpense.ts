@@ -1,8 +1,8 @@
-import { useContext } from 'react'
+import { useMutation } from '@apollo/client'
+import { useState } from 'react'
 import { useAsyncCallback } from 'react-async-hook'
-import { ExpenseServiceContext } from '../providers/ExpenseServiceProvider'
-import { SplitResult } from '../services/ExpenseService'
-import { Person } from '../typeDefs'
+import { CreateExpenseDocument, DebtorInputType } from '../graphql/generated'
+import { Person, SplitResult } from '../typeDefs'
 
 interface ExpenseFormUI {
   name: string
@@ -11,36 +11,53 @@ interface ExpenseFormUI {
   splitResult: SplitResult
 }
 
-const useCreateExpense = ({ name, totalAmount, payer, splitResult }: ExpenseFormUI) => {
-  const expenseService = useContext(ExpenseServiceContext)
+const useCreateExpense = () => {
+  const [validationError, setValidationError] = useState('')
+  const [createExpenseMutation, { data, loading, error }] = useMutation(CreateExpenseDocument)
 
-  const nameValid = name.length > 0
-  const amountValid = totalAmount > 0
-  const payerValid = !!payer
-  const splitResultValid = splitResult.rest === 0 && splitResult.debtors.length > 0
+  const createExpense = useAsyncCallback(async (form: ExpenseFormUI) => {
+    const nameValid = form.name.length > 0
+    const amountValid = form.totalAmount > 0
+    const payerValid = !!form.payer
+    const splitResultValid = form.splitResult.rest === 0 && form.splitResult.debtors.length > 0
 
-  const createExpense = useAsyncCallback(async () => {
-    if (!nameValid) throw new Error('Expense name cannot be empty!')
-    if (!amountValid) throw new Error('Amount has to be greater than zero!')
-    if (!payerValid) throw new Error('Please specify who paid for this expense!')
-    if (!splitResultValid)
-      throw new Error('Please make sure the rest is zero or have at least one debtor!')
+    if (!nameValid) {
+      setValidationError('Expense name cannot be empty!')
+      return
+    }
+    if (!amountValid) {
+      setValidationError('Amount has to be greater than zero!')
+      return
+    }
+    if (!payerValid) {
+      setValidationError('Please specify who paid for this expense!')
+      return
+    }
+    if (!splitResultValid) {
+      setValidationError('Please make sure the rest is zero or have at least one debtor!')
+      return
+    }
 
-    const result = await expenseService.create({
-      name,
-      totalAmount,
-      payer,
-      debtors: splitResult.debtors,
+    await createExpenseMutation({
+      variables: {
+        name: form.name,
+        totalAmount: form.totalAmount,
+        payerId: form.payer!.id,
+        debtors: form.splitResult.debtors.map(
+          (d): DebtorInputType => ({
+            personId: d.person.id,
+            amount: d.amount,
+          }),
+        ),
+      },
     })
-
-    if ('errorMessage' in result) throw new Error(result.errorMessage)
-    return result
   })
 
   return {
     createExpense: createExpense.execute,
-    loading: createExpense.loading,
-    error: createExpense.error,
+    data,
+    loading,
+    error: validationError || error?.message,
   }
 }
 

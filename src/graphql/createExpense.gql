@@ -5,25 +5,7 @@ mutation CreateExpense(
   $debtors: [DebtorInputType!]!
 ) {
   createExpense(name: $name, totalAmount: $totalAmount, payerId: $payerId, debtors: $debtors) {
-    ... on Expense {
-      id
-      name
-      timestamp
-      totalAmount
-      payer {
-        id
-        name
-      }
-      debtors {
-        person {
-          id
-          name
-        }
-        amount
-      }
-    }
-    ... on Error {
-      errorMessage
-    }
+    id
+    name
   }
 }

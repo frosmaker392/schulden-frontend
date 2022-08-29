@@ -1,20 +1,15 @@
 query GetDebtSummary {
   getDebtSummary {
-    ... on DebtSummary {
-      totalAmount
-      topDebtors {
-        person {
-          id
-          name
-          ... on User {
-            email
-          }
+    totalAmount
+    topDebtors {
+      person {
+        id
+        name
+        ... on User {
+          email
         }
-        amount
       }
-    }
-    ... on Error {
-      errorMessage
+      amount
     }
   }
 }

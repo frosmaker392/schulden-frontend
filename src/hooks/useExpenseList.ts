@@ -1,31 +1,43 @@
-import { useContext, useState } from 'react'
-import { useAsync, useAsyncCallback } from 'react-async-hook'
-import { ExpenseServiceContext } from '../providers/ExpenseServiceProvider'
-import { ExpenseListElement } from '../services/ExpenseService'
+import { useQuery } from '@apollo/client'
+import { useMemo } from 'react'
+import { GetAllExpensesDocument } from '../graphql/generated'
+import { ExpenseListElement } from '../typeDefs'
 import useCurrentUser from './useCurrentUser'
 
 const useExpenseList = () => {
   const { user } = useCurrentUser()
-  const expenseService = useContext(ExpenseServiceContext)
+  const { data, loading, error, refetch } = useQuery(GetAllExpensesDocument)
 
-  const [expenses, setExpenses] = useState<ExpenseListElement[]>()
+  const expenses: ExpenseListElement[] = useMemo(() => {
+    if (!user || !data) return []
 
-  const fetchAndSet = useAsyncCallback(async () => {
-    if (!user) throw new Error('Cannot fetch expenses, please log in!')
+    return data.getAllExpenses.map((expense) => {
+      let outstandingAmount = 0
+      if (expense.payer.id === user.id) {
+        for (const debtor of expense.debtors) {
+          if (debtor.person.id === user.id) continue
 
-    const result = await expenseService.getAll(user.id)
-    if ('errorMessage' in result) throw new Error(result.errorMessage)
+          outstandingAmount += debtor.amount
+        }
+      } else {
+        const matchingDebtor = expense.debtors.find((debtor) => debtor.person.id === user.id)
+        outstandingAmount -= matchingDebtor?.amount ?? 0
+      }
 
-    setExpenses(result)
-  })
-
-  useAsync(fetchAndSet.execute, [user])
+      return {
+        id: expense.id,
+        name: expense.name,
+        timestamp: expense.timestamp,
+        outstandingAmount,
+      }
+    })
+  }, [data, user])
 
   return {
     expenses,
-    isLoading: fetchAndSet.loading,
-    error: fetchAndSet.error,
-    refresh: fetchAndSet.execute,
+    loading,
+    error,
+    refresh: refetch,
   }
 }
 
