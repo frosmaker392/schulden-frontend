@@ -202,6 +202,30 @@ export type GetDebtSummaryQuery = {
   }
 }
 
+export type GetExpenseQueryVariables = Exact<{
+  expenseId: Scalars['String']
+}>
+
+export type GetExpenseQuery = {
+  __typename?: 'Query'
+  getExpense: {
+    __typename?: 'Expense'
+    name: string
+    timestamp: string
+    totalAmount: number
+    payer:
+      | { __typename?: 'OfflinePerson'; id: string; name: string }
+      | { __typename?: 'User'; email: string; id: string; name: string }
+    debtors: Array<{
+      __typename?: 'Debtor'
+      amount: number
+      person:
+        | { __typename?: 'OfflinePerson'; id: string; name: string }
+        | { __typename?: 'User'; email: string; id: string; name: string }
+    }>
+  }
+}
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String']
   password: Scalars['String']
@@ -546,6 +570,103 @@ export const GetDebtSummaryDocument = {
     },
   ],
 } as unknown as DocumentNode<GetDebtSummaryQuery, GetDebtSummaryQueryVariables>
+export const GetExpenseDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetExpense' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'expenseId' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'getExpense' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'expenseId' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'expenseId' } },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'timestamp' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'totalAmount' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'payer' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                      {
+                        kind: 'InlineFragment',
+                        typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [{ kind: 'Field', name: { kind: 'Name', value: 'email' } }],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'debtors' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'person' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                            { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                            {
+                              kind: 'InlineFragment',
+                              typeCondition: {
+                                kind: 'NamedType',
+                                name: { kind: 'Name', value: 'User' },
+                              },
+                              selectionSet: {
+                                kind: 'SelectionSet',
+                                selections: [
+                                  { kind: 'Field', name: { kind: 'Name', value: 'email' } },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                      { kind: 'Field', name: { kind: 'Name', value: 'amount' } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetExpenseQuery, GetExpenseQueryVariables>
 export const LoginDocument = {
   kind: 'Document',
   definitions: [

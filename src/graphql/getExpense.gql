@@ -1,0 +1,24 @@
+query GetExpense($expenseId: String!) {
+  getExpense(expenseId: $expenseId) {
+    name
+    timestamp
+    totalAmount
+    payer {
+      id
+      name
+      ... on User {
+        email
+      }
+    }
+    debtors {
+      person {
+        id
+        name
+        ... on User {
+          email
+        }
+      }
+      amount
+    }
+  }
+}

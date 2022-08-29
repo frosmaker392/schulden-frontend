@@ -1,18 +1,23 @@
-.expense-list {
+.item-list {
   margin-top: 1em;
 }
 
-.expense-list > ion-item {
+.item-list > ion-item {
   --background: var(--ion-color-light-shade);
   --min-height: 3.5em;
 }
 
-.expense-list .outstanding-label {
+.item-list .end-label {
   text-align: right;
   font-size: medium;
 }
 
-.expense-list .outstanding-label > p {
+.item-list .end-label > p {
   margin: 0;
   line-height: 20px;
+}
+
+.debt-list .person-item {
+  --background: transparent;
+  width: 100%;
 }

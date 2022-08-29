@@ -1,41 +1,26 @@
-import { IonItem, IonLabel, IonList, IonNote } from '@ionic/react'
-import React, { ComponentProps } from 'react'
+import { IonItem, IonLabel, IonList } from '@ionic/react'
+import React from 'react'
 import dayjs from 'dayjs'
 
 import { ExpenseListElement } from '../../typeDefs'
-import AmountLabel from '../atoms/AmountLabel'
 
-import './ExpenseList.css'
-
-interface OutstandingNoteProps extends ComponentProps<typeof IonNote> {
-  amount: number
-}
+import './List.css'
+import OutstandingNote from '../molecules/OutstandingNote'
 
 interface ExpenseListProps {
   expenses: ExpenseListElement[]
 }
 
-const OutstandingNote: React.FC<OutstandingNoteProps> = ({ amount, ...noteProps }) => {
-  const outstandingLabelPrefix = amount < 0 ? 'You owe ' : amount > 0 ? 'You receive ' : ''
-
-  return (
-    <IonNote {...noteProps}>
-      <p>{outstandingLabelPrefix}</p>
-      <AmountLabel amount={amount} conditionallyColored />
-    </IonNote>
-  )
-}
-
 const ExpenseList: React.FC<ExpenseListProps> = ({ expenses }) => {
   return (
-    <IonList class='expense-list'>
+    <IonList class='item-list expense-list'>
       {expenses.map((e) => (
-        <IonItem key={e.id} lines='full'>
+        <IonItem key={e.id} lines='full' routerLink={`/expense/details/${e.id}`} detail={false}>
           <IonLabel slot='start'>
             <h2>{e.name}</h2>
             <p>{dayjs(e.timestamp).fromNow()}</p>
           </IonLabel>
-          <OutstandingNote slot='end' className='outstanding-label' amount={e.outstandingAmount} />
+          <OutstandingNote slot='end' className='end-label' amount={e.outstandingAmount} />
         </IonItem>
       ))}
     </IonList>

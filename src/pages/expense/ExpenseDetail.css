@@ -1,0 +1,27 @@
+.expense-detail .upper-card .name {
+  font-size: 1.7em;
+  font-weight: 700;
+}
+
+.expense-detail .upper-card .from-now {
+  font-size: 1em;
+  text-transform: none;
+}
+
+.expense-detail .upper-card .total-amount-label {
+  color: var(--ion-color-light-contrast);
+  font-weight: 700;
+  font-size: 1.3em;
+
+  margin-top: 0.6em;
+}
+
+.expense-detail .lower-card {
+  padding-bottom: 1em;
+}
+
+.expense-detail .lower-card .end-label {
+  color: var(--ion-color-light-contrast);
+  margin-top: auto;
+  margin-bottom: auto;
+}
