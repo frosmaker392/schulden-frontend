@@ -1,0 +1,17 @@
+query GetAllRelatedExpenses($personId: String!) {
+  getAllRelatedExpenses(personId: $personId) {
+    id
+    name
+    timestamp
+    totalAmount
+    payer {
+      id
+    }
+    debtors {
+      person {
+        id
+      }
+      amount
+    }
+  }
+}

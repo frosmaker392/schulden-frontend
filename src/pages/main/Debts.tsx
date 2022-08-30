@@ -47,7 +47,7 @@ const Debts: React.FC = () => {
         </IonRefresher>
 
         {debouncedLoading && <IonSpinner class='spinner' />}
-        <DebtList debts={debts ?? []} />
+        <DebtList debts={debts ?? []} link />
       </IonContent>
     </IonPage>
   )

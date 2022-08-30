@@ -28,6 +28,7 @@ import Register from './pages/Register'
 import AuthGate from './pages/AuthGate'
 import CreateExpense from './pages/expense/CreateExpense'
 import ExpenseDetail from './pages/expense/ExpenseDetail'
+import RelatedExpenses from './pages/expense/RelatedExpenses'
 
 setupIonicReact()
 
@@ -49,6 +50,9 @@ const App: React.FC = () => (
         </Route>
         <Route exact path='/expense/details/:id'>
           <ExpenseDetail />
+        </Route>
+        <Route exact path='/expense/related/:personId'>
+          <RelatedExpenses />
         </Route>
         <Route exact path='/'>
           <AuthGate />

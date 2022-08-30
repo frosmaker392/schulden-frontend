@@ -1,0 +1,9 @@
+query GetPerson($personId: String!) {
+  getPerson(id: $personId) {
+    id
+    name
+    ... on User {
+      email
+    }
+  }
+}

@@ -1,0 +1,9 @@
+.related-expenses .spinner {
+  width: 100%;
+  margin: 0.5em 0;
+}
+
+.related-expenses .decor-text {
+  margin-left: 16px;
+  color: var(--ion-color-medium);
+}

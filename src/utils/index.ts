@@ -1,4 +1,4 @@
-import { Optional, Person, SplitMethod } from '../typeDefs'
+import { ExpenseListElement, Optional, Person, SplitMethod } from '../typeDefs'
 
 export * from './FormUtils'
 
@@ -39,4 +39,48 @@ export const calculateSplit = (
     })),
     rest,
   }
+}
+
+interface ExpenseWithoutPersonName {
+  id: string
+  name: string
+  timestamp: string
+  totalAmount: number
+  payer: {
+    id: string
+  }
+  debtors: {
+    person: {
+      id: string
+    }
+    amount: number
+  }[]
+}
+
+export const toExpenseListElement = (
+  userId?: string,
+  expenses?: ExpenseWithoutPersonName[],
+): ExpenseListElement[] => {
+  if (!userId || !expenses) return []
+
+  return expenses.map((expense) => {
+    let outstandingAmount = 0
+    if (expense.payer.id === userId) {
+      for (const debtor of expense.debtors) {
+        if (debtor.person.id === userId) continue
+
+        outstandingAmount += debtor.amount
+      }
+    } else {
+      const matchingDebtor = expense.debtors.find((debtor) => debtor.person.id === userId)
+      outstandingAmount -= matchingDebtor?.amount ?? 0
+    }
+
+    return {
+      id: expense.id,
+      name: expense.name,
+      timestamp: expense.timestamp,
+      outstandingAmount,
+    }
+  })
 }
