@@ -12,14 +12,21 @@ import {
   IonButtons,
   IonCardSubtitle,
   IonCardContent,
+  IonButton,
+  IonIcon,
+  useIonAlert,
+  useIonToast,
+  useIonRouter,
 } from '@ionic/react'
 import dayjs from 'dayjs'
-import React from 'react'
+import { trash } from 'ionicons/icons'
+import React, { useCallback } from 'react'
 import { useParams } from 'react-router'
 import AmountLabel from '../../components/atoms/AmountLabel'
 import PersonLabel from '../../components/atoms/PersonLabel'
 import DebtList from '../../components/organisms/DebtList'
 import useCurrentUser from '../../hooks/useCurrentUser'
+import useDeleteExpense from '../../hooks/useDeleteExpense'
 import useExpenseDetail from '../../hooks/useExpenseDetail'
 
 import './ExpenseDetail.css'
@@ -30,9 +37,28 @@ interface ExpenseDetailRouteParams {
 
 const ExpenseDetail: React.FC = () => {
   const { id } = useParams<ExpenseDetailRouteParams>()
+  const [showDeleteConfirmation] = useIonAlert()
+  const [showToast] = useIonToast()
+  const r = useIonRouter()
 
   const { user } = useCurrentUser()
   const { expense, loading } = useExpenseDetail(id)
+  const { deleteExpense } = useDeleteExpense()
+
+  const onDeleteConfirm = useCallback(() => {
+    deleteExpense({ variables: { expenseId: id } }).then(({ data }) => {
+      showToast(`Successfully deleted expense "${data?.deleteExpense.name}"`, 2000)
+      r.push('/main/expenses', 'back')
+    })
+  }, [deleteExpense, id, r, showToast])
+
+  const onClickDelete = useCallback(() => {
+    showDeleteConfirmation({
+      header: 'Delete Expense',
+      message: 'Are you sure you want to delete this expense?',
+      buttons: ['No', { text: 'Yes', handler: onDeleteConfirm }],
+    })
+  }, [onDeleteConfirm, showDeleteConfirmation])
 
   return (
     <IonPage>
@@ -71,6 +97,11 @@ const ExpenseDetail: React.FC = () => {
 
               <DebtList debts={expense.debtors} noOutstanding userId={user?.id} />
             </IonCard>
+
+            <IonButton class='delete-button' color='danger' fill='outline' onClick={onClickDelete}>
+              <IonIcon slot='start' icon={trash} />
+              Delete
+            </IonButton>
           </>
         )}
       </IonContent>

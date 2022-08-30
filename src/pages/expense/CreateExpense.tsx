@@ -34,7 +34,7 @@ const CreateExpense: React.FC = () => {
     rest: 0,
   })
 
-  const { createExpense, data, loading, error } = useCreateExpense()
+  const { createExpense, loading, error } = useCreateExpense()
 
   const onNameChange = useCallback((e: InputCustomEvent) => {
     setName(e.detail.value ?? '')
@@ -46,14 +46,15 @@ const CreateExpense: React.FC = () => {
       totalAmount,
       payer,
       splitResult,
-    }).then(() => {
+    }).then((res) => {
       const lastRoute = r.routeInfo.pushedByRoute
 
       if (lastRoute) r.push(lastRoute, 'back')
       else r.push('/main', 'back')
-      present(`Successfully created expense "${data?.createExpense.name}"`, 2000)
+
+      if (res?.data) present(`Successfully created expense "${res.data.createExpense.name}"`, 2000)
     })
-  }, [createExpense, data?.createExpense.name, name, payer, present, r, splitResult, totalAmount])
+  }, [createExpense, name, payer, present, r, splitResult, totalAmount])
 
   return (
     <IonPage>

@@ -14,6 +14,10 @@ export class CredentialsCache {
     localStorage.setItem(this.jwtTokenKey, token)
   }
 
+  clearToken() {
+    localStorage.removeItem(this.jwtTokenKey)
+  }
+
   get user(): Optional<User> {
     return this._user
   }

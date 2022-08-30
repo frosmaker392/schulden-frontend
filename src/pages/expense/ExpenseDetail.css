@@ -25,3 +25,8 @@
   margin-top: auto;
   margin-bottom: auto;
 }
+
+.expense-detail .delete-button {
+  margin-left: 16px;
+  width: 8em;
+}

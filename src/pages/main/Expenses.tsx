@@ -18,18 +18,15 @@ import ExpenseList from '../../components/organisms/ExpenseList'
 import useDebounce from '../../hooks/useDebounce'
 import useExpenseList from '../../hooks/useExpenseList'
 
-import './Expenses.css'
-
 const Expenses: React.FC = () => {
   const { expenses, loading, refresh } = useExpenseList()
   const debouncedLoading = useDebounce(loading, 100)
 
   const onRefresh = useCallback(
     (e: CustomEvent<RefresherEventDetail>) => {
-      setTimeout(() => {
-        refresh().then(() => {
-          e.detail.complete()
-        })
+      setTimeout(async () => {
+        await refresh()
+        e.detail.complete()
       }, 500)
     },
     [refresh],
@@ -53,7 +50,7 @@ const Expenses: React.FC = () => {
           <IonRefresherContent pullingText='Pull to refresh' />
         </IonRefresher>
 
-        {debouncedLoading && <IonSpinner className='expenses-spinner' />}
+        {debouncedLoading && <IonSpinner className='spinner' />}
         <ExpenseList expenses={expenses ?? []} />
 
         <IonFab vertical='bottom' horizontal='end' slot='fixed'>

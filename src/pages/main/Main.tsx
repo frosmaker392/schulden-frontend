@@ -10,7 +10,7 @@ import Debts from './Debts'
 
 const Main: React.FC = () => {
   return (
-    <IonTabs>
+    <IonTabs className='main'>
       <IonRouterOutlet>
         <Redirect exact path='/main' to='/main/home' />
         <Route exact path='/main/home'>

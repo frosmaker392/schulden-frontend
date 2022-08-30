@@ -66,6 +66,14 @@ const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
     }
   }, [personToAdd])
 
+  const deleteDebtor = useCallback((index: number) => {
+    setDebtors((ds) => {
+      const newDs = [...ds]
+      newDs.splice(index, 1)
+      return newDs
+    })
+  }, [])
+
   return (
     <div className='debtors-form'>
       <p className='decor-label'>Expense should be split</p>
@@ -104,7 +112,7 @@ const DebtorsForm: React.FC<DebtorsFormProps> = ({ totalAmount, onChange }) => {
             </IonItem>
 
             <IonItemOptions>
-              <IonItemOption color='danger'>
+              <IonItemOption color='danger' onClick={() => deleteDebtor(i)}>
                 <IonIcon slot='icon-only' icon={trash} />
               </IonItemOption>
             </IonItemOptions>

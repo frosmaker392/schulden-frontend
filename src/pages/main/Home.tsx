@@ -1,6 +1,6 @@
 import {
+  IonButton,
   IonCard,
-  IonCardContent,
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
@@ -10,7 +10,6 @@ import {
   IonHeader,
   IonIcon,
   IonItem,
-  IonLabel,
   IonPage,
   IonRefresher,
   IonRefresherContent,
@@ -18,31 +17,50 @@ import {
   IonTitle,
   IonToolbar,
   RefresherEventDetail,
+  useIonAlert,
+  useIonRouter,
 } from '@ionic/react'
 import { add } from 'ionicons/icons'
 
-import React, { useCallback } from 'react'
+import React, { useCallback, useContext } from 'react'
 import AmountLabel from '../../components/atoms/AmountLabel'
-import PersonItem from '../../components/molecules/PersonItem'
+import DebtList from '../../components/organisms/DebtList'
 import useDebounce from '../../hooks/useDebounce'
 import useDebtSummary from '../../hooks/useDebtSummary'
+import { CredentialsCacheContext } from '../../utils/CredentialsCache'
 
 import './Home.css'
 
 const Home: React.FC = () => {
+  const [showLogoutConfirmation] = useIonAlert()
+  const r = useIonRouter()
+
+  const credsCache = useContext(CredentialsCacheContext)
   const { summary, loading, refresh } = useDebtSummary()
   const debouncedLoading = useDebounce(loading, 100)
 
   const onRefresh = useCallback(
     (e: CustomEvent<RefresherEventDetail>) => {
-      setTimeout(() => {
-        refresh().then(() => {
-          e.detail.complete()
-        })
+      setTimeout(async () => {
+        await refresh()
+        e.detail.complete()
       }, 500)
     },
     [refresh],
   )
+
+  const logout = useCallback(() => {
+    credsCache.clearToken()
+    r.push('/login', 'none')
+  }, [credsCache, r])
+
+  const onClickLogout = useCallback(() => {
+    showLogoutConfirmation({
+      header: 'Log out',
+      message: 'Are you sure you want to log out?',
+      buttons: ['No', { text: 'Yes', handler: logout }],
+    })
+  }, [logout, showLogoutConfirmation])
 
   const label = summary ? (summary.totalAmount > 0 ? 'You would receive' : 'You owe people') : ''
 
@@ -65,37 +83,41 @@ const Home: React.FC = () => {
           <IonRefresherContent pullingText='Pull to refresh' />
         </IonRefresher>
 
-        <IonCard>
-          {debouncedLoading ? (
-            <IonSpinner class='loading-spinner' />
-          ) : (
-            <>
+        {debouncedLoading && <IonSpinner class='spinner' />}
+        {summary && (
+          <>
+            <IonCard>
               <IonCardHeader>
                 <IonCardSubtitle class='summary-subtitle'>{label}</IonCardSubtitle>
                 <IonCardTitle class='summary-title'>
                   {summary ? <AmountLabel amount={summary.totalAmount} /> : '--'}
                 </IonCardTitle>
               </IonCardHeader>
+            </IonCard>
 
-              <IonCardContent>
-                {summary?.topDebtors.map((d) => (
-                  <IonItem lines='none' key={d.person.id} class='top-debtor-entry' color='light'>
-                    <PersonItem
-                      slot='start'
-                      lines='none'
-                      person={d.person}
-                      isMe={false}
-                      color='light'
-                    />
-                    <IonLabel slot='end'>
-                      <AmountLabel amount={d.amount} conditionallyColored />
-                    </IonLabel>
-                  </IonItem>
-                ))}
-              </IonCardContent>
-            </>
-          )}
-        </IonCard>
+            <IonCard>
+              <IonCardHeader>
+                <IonCardSubtitle>Top debtors</IonCardSubtitle>
+              </IonCardHeader>
+
+              <DebtList debts={summary.topDebtors} />
+
+              <IonItem
+                class='show-all-link'
+                routerLink='/main/debts'
+                routerDirection='none'
+                detail
+                lines='none'
+              >
+                Show all
+              </IonItem>
+            </IonCard>
+          </>
+        )}
+
+        <IonButton class='logout-button' fill='clear' color='danger' onClick={onClickLogout}>
+          Logout
+        </IonButton>
 
         <IonFab vertical='bottom' horizontal='end' slot='fixed'>
           <IonFabButton routerLink='/expense/create'>

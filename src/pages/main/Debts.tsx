@@ -1,10 +1,32 @@
-import { IonContent, IonHeader, IonPage, IonSpinner, IonTitle, IonToolbar } from '@ionic/react'
-import React from 'react'
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonRefresher,
+  IonRefresherContent,
+  IonSpinner,
+  IonTitle,
+  IonToolbar,
+  RefresherEventDetail,
+} from '@ionic/react'
+import React, { useCallback } from 'react'
 import DebtList from '../../components/organisms/DebtList'
+import useDebounce from '../../hooks/useDebounce'
 import useDebtList from '../../hooks/useDebtList'
 
 const Debts: React.FC = () => {
-  const { debts, loading } = useDebtList()
+  const { debts, loading, refresh } = useDebtList()
+  const debouncedLoading = useDebounce(loading, 100)
+
+  const onRefresh = useCallback(
+    (e: CustomEvent<RefresherEventDetail>) => {
+      setTimeout(async () => {
+        await refresh()
+        e.detail.complete()
+      }, 500)
+    },
+    [refresh],
+  )
 
   return (
     <IonPage>
@@ -20,8 +42,12 @@ const Debts: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        {loading && <IonSpinner />}
-        {debts && <DebtList debts={debts} />}
+        <IonRefresher slot='fixed' onIonRefresh={onRefresh}>
+          <IonRefresherContent pullingText='Pull to refresh' />
+        </IonRefresher>
+
+        {debouncedLoading && <IonSpinner class='spinner' />}
+        <DebtList debts={debts ?? []} />
       </IonContent>
     </IonPage>
   )
