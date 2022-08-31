@@ -29,7 +29,7 @@ const PersonSearchModal: React.FC<PersonSearchModalProps> = ({ existingPersons, 
   const { user } = useCurrentUser()
   const [query, setQuery] = useState('')
 
-  const { persons, loading } = useFindPersons(query)
+  const { persons, loading, createPerson } = useFindPersons(query)
 
   let suggestions = persons ?? []
   if (user && query.length === 0) suggestions = [user, ...suggestions]
@@ -46,6 +46,10 @@ const PersonSearchModal: React.FC<PersonSearchModalProps> = ({ existingPersons, 
     (person: Person) => () => onDismiss(person, 'submit'),
     [onDismiss],
   )
+
+  const onClickCreate = useCallback(() => {
+    createPerson(query)
+  }, [createPerson, query])
 
   return (
     <IonPage>
@@ -65,7 +69,6 @@ const PersonSearchModal: React.FC<PersonSearchModalProps> = ({ existingPersons, 
               <IonSpinner />
             </IonItem>
           ) : (
-            filteredSuggestions &&
             filteredSuggestions.map((s) => (
               <PersonItem
                 key={s.id}
@@ -76,6 +79,10 @@ const PersonSearchModal: React.FC<PersonSearchModalProps> = ({ existingPersons, 
             ))
           )}
         </IonList>
+
+        {!loading && query.length > 0 && (
+          <IonButton onClick={onClickCreate}>Create person with name "{query}"</IonButton>
+        )}
       </IonContent>
     </IonPage>
   )

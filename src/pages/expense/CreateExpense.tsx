@@ -47,6 +47,8 @@ const CreateExpense: React.FC = () => {
       payer,
       splitResult,
     }).then((res) => {
+      if (!res) return
+
       const lastRoute = r.routeInfo.pushedByRoute
 
       if (lastRoute) r.push(lastRoute, 'back')

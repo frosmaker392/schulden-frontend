@@ -26,7 +26,6 @@ import AmountLabel from '../../components/atoms/AmountLabel'
 import PersonLabel from '../../components/atoms/PersonLabel'
 import DebtList from '../../components/organisms/DebtList'
 import useCurrentUser from '../../hooks/useCurrentUser'
-import useDeleteExpense from '../../hooks/useDeleteExpense'
 import useExpenseDetail from '../../hooks/useExpenseDetail'
 
 import './ExpenseDetail.css'
@@ -42,15 +41,14 @@ const ExpenseDetail: React.FC = () => {
   const r = useIonRouter()
 
   const { user } = useCurrentUser()
-  const { expense, loading } = useExpenseDetail(id)
-  const { deleteExpense } = useDeleteExpense()
+  const { expense, loading, deleteExpense } = useExpenseDetail(id)
 
   const onDeleteConfirm = useCallback(() => {
-    deleteExpense({ variables: { expenseId: id } }).then(({ data }) => {
+    deleteExpense().then(({ data }) => {
       showToast(`Successfully deleted expense "${data?.deleteExpense.name}"`, 2000)
       r.push('/main/expenses', 'back')
     })
-  }, [deleteExpense, id, r, showToast])
+  }, [deleteExpense, r, showToast])
 
   const onClickDelete = useCallback(() => {
     showDeleteConfirmation({

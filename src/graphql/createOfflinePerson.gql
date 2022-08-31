@@ -1,0 +1,6 @@
+mutation CreateOfflinePerson($name: String!) {
+  createOfflinePerson(name: $name) {
+    id
+    name
+  }
+}

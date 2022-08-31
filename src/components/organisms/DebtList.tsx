@@ -22,6 +22,7 @@ const DebtList: React.FC<DebtListProps> = ({ debts, noOutstanding, userId, link 
           key={d.person.id}
           lines='full'
           routerLink={link ? `/expense/related/${d.person.id}` : undefined}
+          detail={false}
         >
           <IonLabel slot='start'>
             <PersonItem
