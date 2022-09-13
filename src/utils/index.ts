@@ -1,6 +1,8 @@
 import { ExpenseListElement, Optional, Person, SplitMethod } from '../typeDefs'
 
 export * from './FormUtils'
+export * from './EnvExtractor'
+export * from './CredentialsCache'
 
 export const toFormattedCurrency = (amount: number): string =>
   Intl.NumberFormat('de-DE', {

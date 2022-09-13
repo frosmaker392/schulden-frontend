@@ -9,11 +9,16 @@ import ApolloLinkTimeout from 'apollo-link-timeout'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { CredentialsCache, CredentialsCacheContext } from './utils/CredentialsCache'
+import { EnvExtractor } from './utils'
+
+// Initialize env variables
+const envKeys = ['REACT_APP_API_URL'] as const
+const envObject = new EnvExtractor(envKeys).getEnvVariables(process.env)
 
 dayjs.extend(relativeTime)
 
 // https://medium.com/risan/set-authorization-header-with-apollo-client-e934e6517ccf
-const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
+const httpLink = new HttpLink({ uri: envObject.REACT_APP_API_URL })
 
 const credentialsCache = new CredentialsCache()
 const authLink = new ApolloLink((operation, forward) => {
