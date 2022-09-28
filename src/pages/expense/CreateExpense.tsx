@@ -14,7 +14,7 @@ import {
 import React, { useCallback, useState } from 'react'
 import FormError from '../../components/atoms/FormError'
 import CurrencyInput from '../../components/molecules/CurrencyInput'
-import PersonInput from '../../components/molecules/PersonInput'
+import PersonInput from '../../components/organisms/PersonInput'
 import TextInput from '../../components/molecules/TextInput'
 import DebtorsForm from '../../components/organisms/DebtorsForm'
 import useCreateExpense from '../../hooks/useCreateExpense'

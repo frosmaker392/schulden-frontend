@@ -3,7 +3,7 @@ import { OverlayEventDetail } from '@ionic/react/dist/types/components/react-com
 import React from 'react'
 import { Optional, Person } from '../../typeDefs'
 import InputFieldContainer from '../atoms/InputFieldContainer'
-import PersonSearchModal from '../organisms/PersonSearchModal'
+import PersonSearchModal from './PersonSearchModal'
 
 interface PersonInputProps {
   label?: string

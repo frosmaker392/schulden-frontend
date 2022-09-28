@@ -17,7 +17,7 @@ import { Optional, Person, SplitMethod, SplitResult } from '../../typeDefs'
 import { calculateSplit } from '../../utils'
 import AmountLabel from '../atoms/AmountLabel'
 import CurrencyInput from '../molecules/CurrencyInput'
-import PersonInput from '../molecules/PersonInput'
+import PersonInput from './PersonInput'
 import PersonItem from '../molecules/PersonItem'
 
 import './DebtorsForm.css'
